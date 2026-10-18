@@ -1,0 +1,35 @@
+# Node
+node_modules/
+npm-debug.log*
+dist/
+build/
+
+# Backend data (ephemeral)
+backend/data/
+backend/node_modules/
+
+# Mobile build outputs
+belburge-mobile/android/app/build/
+belburge-mobile/android/build/
+belburge-mobile/android/.gradle/
+belburge-mobile/ios/build/
+belburge-mobile/dist/
+
+# Secrets — never commit real keystore
+belburge-mobile/android/*.keystore
+belburge-mobile/android/*.pem
+belburge-mobile/android/keystore.properties
+*.keystore
+*.pem
+
+# IDE
+.idea/
+.vscode/
+.DS_Store
+.env
+
+# Archives (regenerate)
+*.zip
+
+# Capacitor copy
+belburge-mobile/node_modules/

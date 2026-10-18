@@ -1,0 +1,32 @@
+{
+  "name": "belburge-tracker",
+  "version": "1.0.0",
+  "description": "Belburge International Limited – Bonded Terminal Container Tracker (Mobile)",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 8000",
+    "build": "echo 'No build step – static PWA'",
+    "cap:init": "cap init",
+    "cap:add:android": "cap add android",
+    "cap:add:ios": "cap add ios",
+    "cap:sync": "cap sync",
+    "cap:open:android": "cap open android",
+    "cap:open:ios": "cap open ios",
+    "cap:build:android": "cap sync android && cd android && ./gradlew assembleDebug",
+    "cap:build:ios": "cap sync ios && cd ios/App && pod install && xcodebuild -workspace App.xcworkspace -scheme App -configuration Release"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.2.2",
+    "@capacitor/app": "^6.0.1",
+    "@capacitor/core": "^6.1.0",
+    "@capacitor/haptics": "^6.0.1",
+    "@capacitor/ios": "^6.2.2",
+    "@capacitor/keyboard": "^6.0.1",
+    "@capacitor/splash-screen": "^6.0.2",
+    "@capacitor/status-bar": "^6.0.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.0"
+  }
+}

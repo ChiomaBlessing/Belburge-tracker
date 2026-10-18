@@ -1,0 +1,24 @@
+{
+  "appId": "com.belburge.tracker",
+  "appName": "Belburge Tracker",
+  "webDir": "www",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1200,
+      "backgroundColor": "#183D2C"
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#183D2C"
+    },
+    "Keyboard": {
+      "resize": "body",
+      "resizeOnFullScreen": true
+    }
+  },
+  "server": {
+    "androidScheme": "https",
+    "iosScheme": "https",
+    "hostname": "belburge.bilbt.app"
+  }
+}

@@ -1,0 +1,2701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>Belburge Tracker — Mobile</title>
+<meta name="theme-color" content="#183D2C">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Belburge">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23183D2C'/%3E%3Ctext x='50' y='64' font-family='monospace' font-size='32' font-weight='700' fill='%23C4841C' text-anchor='middle'%3EBILBT%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23183D2C'/%3E%3Ctext x='50' y='64' font-family='monospace' font-size='26' font-weight='700' fill='%23C4841C' text-anchor='middle'%3EBILBT%3C/text%3E%3C/svg%3E">
+<link rel="manifest" href='data:application/manifest+json,{"name":"Belburge Tracker","short_name":"Belburge","start_url":".","display":"standalone","background_color":"%23183D2C","theme_color":"%23183D2C"}'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --forest:#183D2C; --forest-2:#1F5038; --forest-3:#3C7A56;
+    --slate:#57685C; --paper:#F2F5EC; --panel:#FFFFFF; --ink:#16211A; --ink-soft:#49574C; --line:#D9E1D2;
+    --amber:#C4841C; --amber-soft:#F6E7CE; --leaf:#3E7D46; --leaf-soft:#DCEBD8;
+    --rust:#A33A2E; --rust-soft:#F5DCD6; --stamp:#8A2E2E;
+    --radius:3px; --shadow:0 1px 2px rgba(16,40,26,.08), 0 6px 18px rgba(16,40,26,.07);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans', sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  h1,h2,h3,h4{font-family:'Zilla Slab', serif;font-weight:600;margin:0 0 .3em 0;color:var(--forest);letter-spacing:.2px;}
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  a{color:inherit;}
+  button{font-family:inherit;cursor:pointer;}
+  :focus-visible{outline:2px solid var(--amber); outline-offset:2px;}
+  ::-webkit-scrollbar{width:10px;height:10px;}
+  ::-webkit-scrollbar-thumb{background:#c7d0bd;border-radius:6px;}
+
+  #login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--forest);padding:24px;
+    background-image:repeating-linear-gradient(135deg, rgba(255,255,255,.03) 0 2px, transparent 2px 26px);}
+  .auth-shell{width:100%;max-width:440px;}
+  .auth-brand{text-align:center;margin-bottom:22px;}
+  .auth-brand .stamp-mark{width:44px;height:44px;border:2px solid var(--amber);border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--amber);font-size:13px;margin:0 auto 12px;background:rgba(0,0,0,.15);}
+  .auth-brand h1{color:#fff;font-size:20px;margin-bottom:4px;}
+  .auth-brand .sub{color:#9FD3AA;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;}
+  .auth-card{background:var(--panel);border-radius:6px;box-shadow:0 20px 60px rgba(0,0,0,.35);padding:32px 30px;max-height:88vh;overflow-y:auto;}
+  .auth-card h2{font-size:19px;margin-bottom:6px;}
+  .auth-card .lede{color:var(--ink-soft);font-size:13px;margin-bottom:22px;}
+  .welcome-pitch{color:var(--ink-soft);text-align:center;font-size:13.5px;max-width:34ch;margin:0 auto 26px;}
+  .welcome-actions{display:flex;flex-direction:column;gap:10px;}
+  select, input[type=text], input[type=email], input[type=password], input[type=number], input[type=date], input[type=tel], input[type=file], input[type=color], textarea{
+    width:100%;border:1px solid var(--line);border-radius:var(--radius);padding:10px 11px;font-family:inherit;font-size:13.5px;background:#fff;color:var(--ink);}
+  input[type=file]{padding:7px;}
+  input[type=color]{padding:3px;height:38px;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--forest);background:var(--forest);color:#fff;padding:10px 18px;border-radius:var(--radius);font-weight:600;font-size:13.5px;letter-spacing:.2px;}
+  .btn:hover{background:var(--forest-2);}
+  .btn.secondary{background:#fff;color:var(--forest);}
+  .btn.secondary:hover{background:#F1F4EC;}
+  .btn.ghost{background:transparent;border-color:transparent;color:var(--slate);padding:8px 10px;}
+  .btn.small{padding:6px 11px;font-size:12.5px;}
+  .btn.full{width:100%;}
+  .btn.danger{border-color:var(--rust);background:#fff;color:var(--rust);}
+  .btn.danger:hover{background:var(--rust-soft);}
+  .btn[disabled]{opacity:.45; cursor:not-allowed;}
+  .field label{display:block;font-size:11.5px;color:var(--slate);text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px;}
+  .field{margin-bottom:14px;}
+  .field .fhint{font-size:11px;color:var(--slate);margin-top:3px;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .form-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+  @media (max-width:600px){ .form-grid,.form-grid3{grid-template-columns:1fr;} }
+  .auth-foot{text-align:center;font-size:12.5px;color:var(--ink-soft);margin-top:16px;}
+  .auth-foot button{color:var(--forest-2);font-weight:600;text-decoration:underline;background:none;border:none;padding:0;}
+  .demo-box{background:var(--leaf-soft);border:1px solid #BFDCC0;border-radius:var(--radius);padding:10px 12px;font-size:11.5px;color:var(--forest-2);margin-top:16px;}
+  .demo-box b{font-family:'IBM Plex Mono',monospace;}
+  .err-text{color:var(--rust);font-size:12px;margin:-6px 0 10px;}
+  .otp-banner{background:var(--amber-soft); border:1px solid #E4C88E; border-radius:var(--radius); padding:10px 12px; font-size:12px; color:#6E4B0E; margin-bottom:14px;}
+  .otp-banner b{font-family:'IBM Plex Mono',monospace; font-size:15px; letter-spacing:3px;}
+
+  #app-shell{display:none; min-height:100vh; grid-template-columns:224px 1fr;}
+  @media (min-width:861px){ #app-shell{display:grid;} }
+  .sidebar{background:var(--forest);color:#DCE8DD;padding:20px 16px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+  .sidebar .brand{margin-bottom:24px;}
+  .sidebar .brand .stamp-mark{width:34px;height:34px;border:2px solid var(--amber);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--amber);font-size:11px;margin-bottom:10px;}
+  .sidebar .brand h2{color:#fff;font-size:16px;margin-bottom:2px;line-height:1.25;}
+  .sidebar .brand .sub{font-size:10px;color:#8FB89B;font-family:'IBM Plex Mono',monospace;letter-spacing:.6px;}
+  .nav-item{padding:9px 10px;border-radius:var(--radius);font-size:13px;font-weight:500;color:#C6D8C6;margin-bottom:2px;display:flex;align-items:center;gap:8px;justify-content:space-between;}
+  .nav-item.active{background:rgba(255,255,255,.1); color:#fff;}
+  .nav-item:hover{background:rgba(255,255,255,.06);}
+  .nav-badge{background:var(--amber);color:#3A2900;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;}
+  .sidebar-foot{margin-top:auto; border-top:1px solid rgba(255,255,255,.14); padding-top:14px;}
+  .who{font-size:12.5px; color:#fff; font-weight:600; display:flex; align-items:center; gap:8px;}
+  .who .role-tag{display:block;font-size:10.5px;color:var(--amber);font-family:'IBM Plex Mono',monospace;margin-top:2px;letter-spacing:.6px;}
+  .who .dept-tag{display:block;font-size:10.5px;color:#9BD1A6;margin-top:1px;}
+
+  .main{padding:26px 30px 60px; max-width:1260px;}
+  .topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:22px;flex-wrap:wrap;}
+  .topbar h1{font-size:22px;margin-bottom:4px;}
+  .topbar .desc{color:var(--ink-soft);font-size:13px;max-width:64ch;}
+  .mobile-topbar{display:none;position:sticky;top:0;z-index:20;background:var(--forest);color:#fff;padding:12px 16px;align-items:center;justify-content:space-between;}
+  @media (max-width:860px){
+    .mobile-topbar{display:flex;}
+    .sidebar{position:fixed;left:0;top:0;z-index:30;width:230px;transform:translateX(-100%);transition:transform .2s;box-shadow:0 0 30px rgba(0,0,0,.35);}
+    .sidebar.open{transform:translateX(0);}
+    .main{padding:18px 16px 60px;}
+  }
+  .hold-banner{background:var(--rust);color:#fff;padding:10px 16px;border-radius:var(--radius);font-size:12.5px;font-weight:600;margin-bottom:18px;letter-spacing:.3px;}
+
+  .metric-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;}
+  @media (max-width:760px){ .metric-row{grid-template-columns:repeat(2,1fr);} }
+  .metric{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);}
+  .metric .num{font-family:'Zilla Slab',serif;font-size:23px;color:var(--forest);font-weight:600;line-height:1;}
+  .metric .lbl{font-size:10.5px;color:var(--slate);text-transform:uppercase;letter-spacing:.7px;margin-top:6px;}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:22px;}
+  .panel-head{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+  .panel-head h3{font-size:15px;margin:0;}
+  .panel-body{padding:16px 18px;}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+  .toolbar input,.toolbar select{width:auto;min-width:130px;}
+  .inbox-panel{border:1px solid #E4C88E; background:#FBF4E6;}
+  .inbox-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed #E4C88E;font-size:12.5px;}
+  .inbox-row:last-child{border-bottom:none;}
+
+  .job-row{display:grid;grid-template-columns:120px 1.4fr 1.6fr 90px 100px;gap:12px;align-items:center;padding:12px 4px;border-bottom:1px solid var(--line);cursor:pointer;}
+  .job-row:last-child{border-bottom:none;}
+  .job-row:hover{background:#F7F9F3;}
+  .job-row .cnum{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13px;}
+  .job-row .bol{font-size:11px;color:var(--slate);font-family:'IBM Plex Mono',monospace;}
+  .job-row .stage-lbl{font-size:12.5px;color:var(--ink-soft);}
+  .job-row .owner{font-size:11.5px;color:var(--ink-soft);}
+  @media (max-width:700px){ .job-row{grid-template-columns:1fr;gap:4px;} }
+  .flag{display:inline-flex;align-items:center;gap:5px;background:var(--rust-soft);color:var(--stamp);border:1px solid #E3B3AC;font-size:10.5px;font-weight:600;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px;}
+  .flag::before{content:"●";font-size:8px;}
+  .pill{display:inline-flex;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;}
+  .pill.ok{background:var(--leaf-soft);color:var(--leaf);}
+  .pill.wait{background:var(--amber-soft);color:var(--amber);}
+  .pill.done{background:#E4E7DE;color:var(--slate);}
+  .pill.stepped{background:var(--rust-soft);color:var(--stamp);}
+
+  .rail-wrap{overflow-x:auto;padding-bottom:6px;}
+  .rail{display:flex;min-width:900px;position:relative;padding:26px 0 10px;}
+  .rail::before{content:"";position:absolute;left:0;right:0;top:34px;height:2px;background:var(--line);}
+  .rail-step{flex:1;text-align:center;position:relative;padding:0 3px;}
+  .rail-dot{width:15px;height:15px;border-radius:50%;margin:0 auto 8px;position:relative;z-index:2;background:#fff;border:2px solid var(--line);}
+  .rail-step.complete .rail-dot{background:var(--leaf);border-color:var(--leaf);}
+  .rail-step.current .rail-dot{background:var(--amber);border-color:var(--amber);box-shadow:0 0 0 4px var(--amber-soft);}
+  .rail-step.complete::before,.rail-step.current::before{content:"";position:absolute;left:0;right:50%;top:34px;height:2px;background:var(--leaf);z-index:1;}
+  .rail-step:first-child::before{left:50%;}
+  .rail-code{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--slate);letter-spacing:.4px;}
+  .rail-step.complete .rail-code,.rail-step.current .rail-code{color:var(--forest);font-weight:600;}
+  .rail-name{font-size:10.5px;color:var(--ink-soft);margin-top:2px;max-width:110px;margin-left:auto;margin-right:auto;}
+  .stamp-badge{display:inline-flex;align-items:center;gap:6px;border:2px solid var(--stamp);color:var(--stamp);padding:5px 12px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transform:rotate(-2deg);}
+
+  .detail-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;}
+  @media (max-width:900px){ .detail-grid{grid-template-columns:1fr;} }
+  .kv{display:grid;grid-template-columns:150px 1fr;gap:4px 10px;font-size:13px;margin-bottom:6px;}
+  .kv b{color:var(--slate);font-weight:500;font-size:12px;}
+  .history-row{display:flex;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:12.5px;}
+  .history-row:last-child{border-bottom:none;}
+  .history-row .dot{width:7px;height:7px;border-radius:50%;background:var(--forest-3);margin-top:5px;flex-shrink:0;}
+  .history-row .t{color:var(--slate);font-family:'IBM Plex Mono',monospace;font-size:11px;white-space:nowrap;}
+  .alert-card{border:1px solid #E3B3AC;background:var(--rust-soft);border-radius:var(--radius);padding:12px;margin-bottom:10px;}
+  .alert-card h4{color:var(--stamp);font-size:13px;margin-bottom:4px;}
+  .alert-card p{margin:0 0 8px;font-size:12.5px;color:var(--ink);}
+  .bol-card{border:1px solid #E4C88E;background:var(--amber-soft);border-radius:var(--radius);padding:12px;margin-bottom:14px;}
+  .bol-card h4{color:#6E4B0E;font-size:13px;margin-bottom:6px;}
+  .stepdown-card{border:1px solid #E3B3AC;background:var(--rust-soft);border-radius:var(--radius);padding:12px;margin-bottom:14px;}
+  .stepdown-card h4{color:var(--stamp);font-size:13px;margin-bottom:6px;}
+  .doc-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px;}
+  .doc-row:last-child{border-bottom:none;}
+  .fin-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px;}
+  .fin-row:last-child{border-bottom:none;font-weight:600;}
+  .fin-edit-row{display:grid;grid-template-columns:1fr 130px;gap:8px;align-items:center;padding:6px 0;}
+  .fin-edit-row label{font-size:12px;color:var(--ink-soft);}
+  .modal-bg{position:fixed;inset:0;background:rgba(16,40,26,.55);display:none;align-items:flex-start;justify-content:center;padding:30px 16px;overflow-y:auto;z-index:50;}
+  .modal-bg.open{display:flex;}
+  .modal{background:var(--panel);border-radius:var(--radius);max-width:960px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+  .modal-head{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .modal-body{padding:20px 22px;}
+  .empty-state{padding:40px 20px;text-align:center;color:var(--slate);}
+  .empty-state .glyph{font-family:'IBM Plex Mono',monospace;font-size:26px;color:var(--line);margin-bottom:8px;}
+
+  #toast-wrap{position:fixed;bottom:18px;right:18px;z-index:80;display:flex;flex-direction:column;gap:8px;max-width:340px;}
+  .toast{background:var(--forest);color:#fff;padding:12px 14px;border-radius:var(--radius);font-size:12.5px;box-shadow:0 8px 24px rgba(0,0,0,.25);border-left:4px solid var(--amber);animation:slidein .2s ease-out;}
+  @keyframes slidein{from{transform:translateY(8px);opacity:0;} to{transform:translateY(0);opacity:1;}}
+  .action-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);}
+  .action-item:last-child{border-bottom:none;}
+  .action-item .txt{font-size:13px;}
+  .action-item .txt .cn{font-family:'IBM Plex Mono',monospace;font-weight:600;}
+  .tag-line{font-size:11px;color:var(--slate);margin-top:3px;}
+  .section-title{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:var(--slate);font-family:'IBM Plex Mono',monospace;margin:22px 0 10px;}
+  .hint{font-size:12px;color:var(--slate);margin-top:4px;}
+  .bar-row{margin-bottom:10px;}
+  .bar-row .bar-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;}
+  .bar-track{background:#E7EBE1;border-radius:20px;height:9px;overflow:hidden;}
+  .bar-fill{background:var(--forest-3);height:100%;border-radius:20px;}
+  .bar-fill.amber{background:var(--amber);}
+  .bar-fill.rust{background:var(--rust);}
+  .dept-chip{display:inline-block;font-size:10px;text-transform:uppercase;letter-spacing:.5px;font-weight:700;color:var(--forest-2);background:var(--leaf-soft);padding:2px 7px;border-radius:10px;margin-right:6px;}
+  .staff-row{display:grid;grid-template-columns:1fr 1.2fr .9fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:12.5px;}
+  .staff-row:last-child{border-bottom:none;}
+  @media (max-width:800px){ .staff-row{grid-template-columns:1fr 1fr; row-gap:4px;} }
+  .charge-edit{display:flex; gap:8px; flex-wrap:wrap; align-items:end; margin-top:8px;}
+  .charge-edit .field{margin-bottom:0; flex:1; min-width:130px;}
+  .avatar{width:52px;height:52px;border-radius:50%;background:var(--leaf-soft);color:var(--forest);display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Zilla Slab',serif;font-size:18px;object-fit:cover;flex-shrink:0;}
+  .avatar-sm{width:24px;height:24px;border-radius:50%;object-fit:cover;background:var(--leaf-soft);}
+  .perm-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--line);font-size:12.5px;}
+  .perm-row:last-child{border-bottom:none;}
+  .perm-yes{color:var(--leaf);font-weight:700;}
+  .perm-no{color:var(--rust);font-weight:700;}
+  .thread-item{padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer;}
+  .thread-item:hover{background:#F7F9F3;}
+  .msg-bubble{background:#F1F4EC;border-radius:8px;padding:9px 12px;margin-bottom:8px;font-size:12.5px;max-width:80%;}
+  .msg-bubble.mine{background:var(--leaf-soft);margin-left:auto;}
+  .msg-meta{font-size:10.5px;color:var(--slate);margin-bottom:3px;}
+  .settings-section{border-top:1px solid var(--line);padding-top:16px;margin-top:16px;}
+  .settings-section:first-child{border-top:none;margin-top:0;padding-top:0;}
+  .toggle-row{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:13px;}
+  .disabled-note{font-size:11px;color:var(--slate);font-style:italic;}
+  .idcard-preview{max-width:260px;border-radius:var(--radius);border:1px solid var(--line);margin-top:8px;}
+  .verify-card{border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:14px;}
+
+  /* ========================= MOBILE APP SHELL (overrides everything above) ========================= */
+  html,body{height:100%;}
+  body{overscroll-behavior-y:none;}
+  #login-screen{min-height:100vh;padding:20px 18px;padding-top:max(20px, env(safe-area-inset-top));}
+  .auth-card{padding:26px 20px;}
+
+  #app-shell{display:none; grid-template-columns:none; min-height:100vh; min-height:100dvh; flex-direction:column; position:relative;}
+  .sidebar, .mobile-topbar{display:none !important;}
+
+  .app-bar{display:flex; align-items:center; gap:10px; padding:10px 14px; padding-top:max(10px, env(safe-area-inset-top));
+    background:var(--forest); color:#fff; position:sticky; top:0; z-index:25; box-shadow:0 2px 10px rgba(0,0,0,.2);}
+  .app-bar .ab-btn{background:transparent;border:none;color:var(--amber);font-size:20px;line-height:1;padding:6px;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .app-bar .ab-btn:active{background:rgba(255,255,255,.12);}
+  .app-bar .ab-title{flex:1; min-width:0;}
+  .app-bar .ab-title .t1{font-family:'Zilla Slab',serif; font-size:16px; font-weight:600; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .app-bar .ab-title .t2{font-size:10px; color:var(--amber); font-family:'IBM Plex Mono',monospace; letter-spacing:.5px; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .app-bar .ab-avatar{width:34px;height:34px;border-radius:50%;background:var(--amber-soft);color:var(--forest);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;object-fit:cover;border:2px solid var(--amber);}
+
+  .main{flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:16px 14px 90px !important; max-width:none !important;}
+
+  .tab-bar{display:flex; position:sticky; bottom:0; z-index:25; background:var(--panel); border-top:1px solid var(--line);
+    padding-bottom:env(safe-area-inset-bottom); box-shadow:0 -2px 14px rgba(0,0,0,.08);}
+  .tab-btn{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; padding:8px 2px 7px;
+    background:none; border:none; color:var(--slate); font-size:10px; font-family:'IBM Plex Sans',sans-serif; position:relative; min-width:0;}
+  .tab-btn .tb-ic{width:21px;height:21px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+  .tab-btn .tb-lbl{white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; font-weight:500;}
+  .tab-btn.active{color:var(--forest-2);}
+  .tab-btn.active .tb-ic{color:var(--forest-2);}
+  .tab-btn .tb-badge{position:absolute; top:3px; right:calc(50% - 20px); background:var(--rust); color:#fff; font-size:9px; font-weight:700; min-width:15px; height:15px; border-radius:10px; display:flex; align-items:center; justify-content:center; padding:0 3px;}
+
+  .sheet-bg{position:fixed; inset:0; background:rgba(16,40,26,.5); display:none; align-items:flex-end; justify-content:center; z-index:60;}
+  .sheet-bg.open{display:flex;}
+  .sheet{background:var(--panel); width:100%; max-width:600px; border-radius:16px 16px 0 0; max-height:80vh; overflow-y:auto;
+    padding:10px 0 max(14px, env(safe-area-inset-bottom)); box-shadow:0 -10px 40px rgba(0,0,0,.3);}
+  .sheet .sheet-handle{width:36px; height:4px; background:var(--line); border-radius:4px; margin:4px auto 10px;}
+  .sheet .sheet-item{display:flex; align-items:center; gap:12px; padding:13px 20px; font-size:14.5px; font-weight:500; color:var(--ink);}
+  .sheet .sheet-item:active{background:var(--leaf-soft);}
+  .sheet .sheet-item.active-tab{color:var(--forest-2); font-weight:700;}
+  .sheet .sheet-item .sheet-badge{margin-left:auto; background:var(--amber); color:#1A1A1A; font-size:10px; font-weight:700; padding:1px 7px; border-radius:10px;}
+  .sheet hr{border:none; border-top:1px solid var(--line); margin:6px 14px;}
+  .sheet .sheet-head{padding:4px 20px 10px; font-size:11px; text-transform:uppercase; letter-spacing:.8px; color:var(--slate); font-family:'IBM Plex Mono',monospace;}
+  .sheet .sheet-item.danger{color:var(--rust);}
+
+  /* Full-screen slide-up detail modal, app-native feel */
+  .modal-bg{align-items:flex-end !important; padding:0 !important;}
+  .modal{max-width:none !important; width:100% !important; border-radius:16px 16px 0 0 !important; max-height:94vh; overflow-y:auto;
+    animation:sheetup .22s ease-out;}
+  @keyframes sheetup{from{transform:translateY(24px); opacity:.6;} to{transform:translateY(0); opacity:1;}}
+  .modal-head{position:sticky; top:0; background:var(--panel); z-index:2; padding:14px 16px 12px !important;}
+  .modal-body{padding:4px 16px 28px !important;}
+
+  /* Force everything that used multi-column CSS grid (desktop metaphors, many set via inline style=) into single-column mobile cards */
+  .topbar, .metric-row, .job-row, .detail-grid, .form-grid, .form-grid3, .staff-row, .fin-edit-row, .kv, .toolbar{
+    grid-template-columns:1fr !important;
+  }
+  .metric-row, .form-grid, .form-grid3{ gap:10px !important; }
+  .metric-row{ display:grid !important; }
+  .metric{ padding:12px 14px; }
+  .job-row{ display:flex !important; flex-direction:column; align-items:flex-start !important; gap:3px !important; padding:13px 6px !important; }
+  .job-row .cnum{font-size:14px;}
+  .toolbar{ display:flex !important; flex-direction:column; align-items:stretch !important; }
+  .toolbar input, .toolbar select{ width:100% !important; min-width:0 !important; }
+  .kv{ display:flex !important; flex-direction:column; gap:1px !important; margin-bottom:10px; }
+  .kv b{ font-size:11px; }
+  .panel-head{ flex-direction:column; align-items:flex-start !important; gap:8px; }
+  .detail-grid{ gap:8px !important; }
+  .staff-row{ row-gap:6px !important; padding:12px 4px; }
+  .rail-wrap{ -webkit-overflow-scrolling:touch; }
+
+  /* Comfortable touch targets */
+  .btn{ min-height:42px; }
+  .btn.small{ min-height:36px; }
+  select, input[type=text], input[type=email], input[type=password], input[type=number], input[type=date], input[type=datetime-local], input[type=tel], input[type=file], input[type=color], textarea{
+    font-size:16px; /* prevents iOS auto-zoom on focus */ min-height:42px;
+  }
+  textarea{ min-height:70px; }
+
+  #toast-wrap{ left:14px; right:14px; bottom:max(14px, env(safe-area-inset-bottom)); max-width:none; }
+</style>
+</head>
+<body>
+
+<div id="login-screen"><div class="auth-shell">
+  <div class="auth-brand">
+    <div class="stamp-mark">BILBT</div>
+    <h1>Belburge International Limited</h1>
+    <div class="sub">Bonded Terminal Container Tracker</div>
+  </div>
+  <div class="auth-card" id="auth-card"></div>
+</div></div>
+
+<div id="app-shell">
+  <div class="app-bar">
+    <button class="ab-btn" onclick="openMoreSheet()" aria-label="Menu">☰</button>
+    <div class="ab-title">
+      <div class="t1" id="mobile-title">Belburge Tracker</div>
+      <div class="t2" id="brand-sub">BELBURGE INT'L LTD</div>
+    </div>
+    <button class="ab-avatar" id="ab-avatar-btn" onclick="openProfile(state.userId)" aria-label="Profile">?</button>
+  </div>
+  <div class="main" id="main"></div>
+  <div class="tab-bar" id="tab-bar"></div>
+</div>
+
+<div class="sheet-bg" id="more-sheet-bg" onclick="if(event.target===this) closeMoreSheet()">
+  <div class="sheet" id="more-sheet-content"></div>
+</div>
+
+<div class="modal-bg" id="modal-bg"><div class="modal" id="modal-content"></div></div>
+<div id="toast-wrap"></div>
+
+<script>
+/* ========================= CONFIG ========================= */
+const STAGES = [
+  {code:'CPC-CAC', label:'Customs Clearance — Area Controller Approval'},
+  {code:'CPC-APM', label:'Customs Clearance — Revenue Verification'},
+  {code:'CPC-TS',  label:'Customs Clearance — Duty Confirmation'},
+  {code:'CPC-ENF', label:'Customs Clearance — Enforcement Review'},
+  {code:'CPC-GATE',label:'Customs Clearance — Gate Processing'},
+  {code:'CPC-FOU', label:'Customs Clearance — Escort Assigned'},
+  {code:'MPT-LOAD',label:'Loading at Mother Port Terminal'},
+  {code:'MPT-EXIT',label:'Leaving Mother Port Terminal (WACT / OMT)'},
+  {code:'TRANSIT', label:'In Transit to Bonded Terminal'},
+  {code:'BILBT-ARR',label:'Arrived at Bonded Terminal'},
+  {code:'EXAM',    label:'Under Examination'},
+  {code:'RELEASE', label:'Customs Released'},
+  {code:'BILBT-EXIT',label:'Exiting Bonded Terminal'},
+  {code:'DELIVERY',label:'Out for Delivery'},
+  {code:'EMPTY',   label:'Returned Empty'}
+];
+const STAGE_DEPT = ['Field Staff','Field Staff','Field Staff','Field Staff','Field Staff','Field Staff',
+  'Field Staff','Field Staff','Field Staff','Operations','Operations','Operations','Operations','Transport','Transport'];
+const DEPARTMENTS = ['Admin','Documentation','DTI','Field Staff','Operations','Transport','Accountant'];
+const FEN_BOL_DEPTS = ['Admin','Documentation','DTI'];
+const FINANCE_DEPTS = ['Admin','Accountant'];
+const DEFAULT_DEPT_STAGE_ACCESS = {Documentation:[], DTI:[], 'Field Staff':[0,1,2,3,4,5,6,7,8], Operations:[9,10,11,12], Transport:[13,14], Accountant:[]};
+const DEPT_DESCRIPTIONS = {
+  Documentation:'Managing First Entry Note, Book of Life, End to End.',
+  DTI:'Direct Trader Input — customs declarations, assessment and entry inputs, Book of Life, PAAR, manifest entries.',
+  'Field Staff':'Moves the transire (letters) from CPC-CAC through Transit to BILBT.',
+  Operations:'Tallying, positioning, and examining physical containers — arrival through BILBT exit.',
+  Transport:'Managing trucks, drivers, and delivery scheduling — delivery through empty return.',
+  Accountant:'Creates invoices and payment descriptions, uploads invoices, updates payment statuses.',
+  Admin:'Full oversight — accounts, system access, verification, billing definitions, and Master Hold.'
+};
+const ALERT_TYPES = {
+  'NAFDAC':{action:'Provide NAFDAC compliance certificate at BILBT.'},
+  'SON':{action:'Provide product certificate at BILBT within 48 hours.'},
+  'NDLEA':{action:'Await NDLEA clearance; do not move container.'},
+  'DC Revenue':{action:'Reconcile declared value with Revenue office.'},
+  'DC Valuation':{action:'Submit supporting valuation documents.'},
+  'T&T':{action:'Confirm Tariff & Trade classification with agent.'},
+  'Seal Mismatch':{action:'Container seal does not match the terminal record. Do not accept delivery — contact BILBT Admin immediately.'}
+};
+const DOC_TYPES = ['Transfer Letter','Landing Certificate','Inspection Act','Exit Note','Gate Pass','PAAR','Bill of Lading','Duty Receipt','Manifest','SGD','Assessment Notice','SON Remita Payment Receipt'];
+const ROLE_META = {
+  importer:{name:'Importer', sub:'Track containers, costs, and delivery ETA'},
+  agent:{name:'Clearing Agent', sub:'Manage client jobs and resolve alerts'},
+  admin:{name:'Admin', sub:'BILBT staff — run the terminal'}
+};
+const ID_TYPE_OPTIONS = {
+  importer:['CAC Document','NIMC National ID'],
+  agent:['Customs Port Pass','Agency License'],
+  admin:['Company Employee ID','Customs Port Pass','NIMC National ID']
+};
+const STATIONS = ['Onne Port Area II Command','WACT Office','OMT Office','BILBT Main Yard'];
+const DEFAULT_SETTINGS = {
+  freeDays:4, dailyPenaltyRate:15000,
+  minPasswordLength:6, passwordComplexity:false, passwordExpiryDays:90,
+  idleTimeoutMinutes:15, mfaRequired:false, ssoRequired:false, ipAllowList:'',
+  masterHold:false,
+  brandName:'Belburge International Limited', brandColor:'#183D2C', vanityUrl:'',
+  defaultTimezone:'Africa/Lagos', defaultLanguage:'English',
+  deptStageAccess: JSON.parse(JSON.stringify(DEFAULT_DEPT_STAGE_ACCESS)),
+  apiKeys:[]
+};
+
+let state = { role:null, person:null, userId:null, department:null, activeTab:'dashboard',
+  containers:[], log:[], users:[], settings:null, referrals:[], messages:[],
+  authView:'welcome', authError:'', regDraft:null, otp:null, otpChannel:null, idleTimer:null,
+  profileTargetId:null, supportThreadKey:null, openContainerId:null };
+
+/* ========================= API CLIENT =========================
+   This file is a static page with no backend of its own, so it talks to a
+   small real server (Node + PostgreSQL) over HTTPS for every read and write.
+   That server is what makes data shared across every device/browser — not
+   just across tabs on one device like the old localStorage version. Each
+   browser is told the server's URL once (saved locally) and from then on
+   every window.storage.get/set call is a real network request. */
+const API_BASE_KEY = 'belburge_api_base';
+function getApiBase(){ try{ const v=localStorage.getItem(API_BASE_KEY); if(v) return v; // auto-detect: backend is served on same origin as frontend (for prod & capacitor live)
+    if(typeof window!=='undefined' && window.location && window.location.origin && window.location.origin.startsWith('http')) return window.location.origin;
+    return ''; }catch(e){ return ''; } }
+function setApiBase(url){ try{ localStorage.setItem(API_BASE_KEY, String(url||'').trim().replace(/\/+$/,'')); }catch(e){} }
+function getAuthToken(){ try{ return localStorage.getItem('belburge_token') || ''; }catch(e){ return ''; } }
+function setAuthToken(t){ try{ if(t) localStorage.setItem('belburge_token', t); else localStorage.removeItem('belburge_token'); }catch(e){} }
+
+async function apiFetch(path, opts){
+  const base = getApiBase();
+  if(!base) { const e = new Error('No server configured yet.'); e.code='NO_API_BASE'; throw e; }
+  opts = opts || {};
+  const headers = Object.assign({'Content-Type':'application/json'}, opts.headers||{});
+  const token = getAuthToken();
+  if(token) headers['Authorization'] = 'Bearer ' + token;
+  let res;
+  try{
+    res = await fetch(base + path, Object.assign({}, opts, {headers}));
+  }catch(netErr){
+    const e = new Error('Could not reach the server. Check the server URL and your connection.');
+    e.code='NETWORK'; throw e;
+  }
+  let body = null;
+  try{ body = await res.json(); }catch(e){}
+  if(res.status===401){ setAuthToken(''); }
+  if(!res.ok){
+    const err = new Error((body && body.error) || ('Request failed (HTTP '+res.status+').'));
+    err.status = res.status; err.body = body;
+    throw err;
+  }
+  return body;
+}
+
+window.storage = {
+  get: async function(key){
+    const body = await apiFetch('/api/storage/'+encodeURIComponent(key), {method:'GET'});
+    return (body && body.value!=null) ? { value: body.value } : null;
+  },
+  set: async function(key, value){
+    await apiFetch('/api/storage/'+encodeURIComponent(key), {method:'PUT', body: JSON.stringify({value: value})});
+    try{ window.dispatchEvent(new CustomEvent('belburge:local-change', {detail:{key}})); }catch(e){}
+  }
+};
+
+/* One-time seed: on a brand-new, empty database there is no admin yet to
+   approve anyone, so the first device to talk to a fresh server automatically
+   hands it the familiar demo dataset. The server refuses (409) once it
+   already has real data, so this is a harmless no-op on every later load. */
+async function tryBootstrapServer(){
+  try{
+    const accounts = seedUsers().map(u=>({id:u.id, email:u.login, password:u.password||'demo123'}));
+    const users = seedUsers().map(u=>{ const c=Object.assign({},u); delete c.password; return c; });
+    await apiFetch('/api/bootstrap-demo-data', {method:'POST', body: JSON.stringify({
+      collections: {
+        containers: seedContainers(), users: users, 'activity-log': [],
+        referrals: [], messages: [], 'org-settings': DEFAULT_SETTINGS
+      },
+      accounts: accounts
+    })});
+  }catch(e){ /* already seeded, or server not reachable yet — either way, non-fatal */ }
+}
+
+/* ========================= LIVE SYNC =========================
+   Keeps every signed-in screen up to date automatically across every device:
+   a WebSocket push gives near-instant updates, and a background poll is kept
+   as a fallback in case the socket drops. */
+let liveSyncTimer = null;
+let liveSocket = null;
+async function refreshFromStorage(){
+  if(!state.role) return; // nothing to keep in sync before sign-in
+  try{
+    const [containers, users, log, settings, referrals, messages] = await Promise.all([
+      loadContainers(), loadUsers(), loadLog(), loadSettings(), loadReferrals(), loadMessages()
+    ]);
+    const containersStr = JSON.stringify(containers), usersStr = JSON.stringify(users), logStr = JSON.stringify(log),
+      referralsStr = JSON.stringify(referrals), messagesStr = JSON.stringify(messages), settingsStr = JSON.stringify(settings);
+    const changed = containersStr!==JSON.stringify(state.containers) || usersStr!==JSON.stringify(state.users) ||
+      logStr!==JSON.stringify(state.log) || referralsStr!==JSON.stringify(state.referrals) ||
+      messagesStr!==JSON.stringify(state.messages) || settingsStr!==JSON.stringify(state.settings);
+    if(!changed) return;
+    state.containers = containers; state.users = users; state.log = log;
+    state.settings = settings; state.referrals = referrals; state.messages = messages;
+    const modalOpen = document.getElementById('modal-bg') && document.getElementById('modal-bg').classList.contains('open');
+    if(modalOpen && state.openContainerId && byId(state.openContainerId)){
+      openContainer(state.openContainerId);
+    } else if(!modalOpen){
+      renderApp();
+    }
+  }catch(e){ /* non-fatal — next tick will retry */ }
+}
+function connectLiveSocket(){
+  try{
+    if(liveSocket){ try{ liveSocket.close(); }catch(e){} liveSocket=null; }
+    const base = getApiBase(); const token = getAuthToken();
+    if(!base || !token) return;
+    const wsUrl = base.replace(/^http/,'ws') + '/ws?token=' + encodeURIComponent(token);
+    const sock = new WebSocket(wsUrl);
+    sock.onmessage = function(ev){
+      try{ const msg = JSON.parse(ev.data); if(msg && msg.type==='changed') refreshFromStorage(); }catch(e){}
+    };
+    sock.onclose = function(){ if(liveSocket===sock) liveSocket=null; };
+    sock.onerror = function(){ try{ sock.close(); }catch(e){} };
+    liveSocket = sock;
+  }catch(e){ /* WebSocket not available — the poll below still covers it */ }
+}
+function startLiveSync(){
+  if(liveSyncTimer) return;
+  connectLiveSocket();
+  liveSyncTimer = setInterval(function(){
+    if(!liveSocket || liveSocket.readyState!==1) connectLiveSocket(); // reconnect if the socket dropped
+    refreshFromStorage();
+  }, 4000);
+}
+function stopLiveSync(){
+  if(liveSyncTimer){ clearInterval(liveSyncTimer); liveSyncTimer=null; }
+  if(liveSocket){ try{ liveSocket.close(); }catch(e){} liveSocket=null; }
+}
+
+/* ========================= STORAGE ========================= */
+async function loadContainers(){
+  let list;
+  try{ const r = await window.storage.get('containers', true); list = r? JSON.parse(r.value) : seedContainers(); }
+  catch(e){ list = seedContainers(); }
+  return list.map(normalizeContainer);
+}
+function normalizeContainer(c){
+  return Object.assign({
+    invoices:[], deliveryLocation:null, sealNumber:null, sealNumberDelivery:null, sealMismatch:false,
+    transireSubmittedDate:null, deliveredDate:null, progressNotes:[], transferLetterNumber:null, exitNumber:null, invoiceNumber:null,
+    placementInstruction:null, placementInstructionBy:null, placementInstructionDate:null,
+    placementActual:null, placementBy:null, placementDate:null,
+    transporter:null, transportHistory:[]
+  }, c, {
+    financial: Object.assign({
+      mptRating:0, shippingRating:0, bilbtCharges:0, clearingExpenses:0, transportation:0,
+      manifestExpenses:0, paarExpenses:0, customsDuties:0, dutyStatus:'pending',
+      dutyPaymentRef:null, dutyPaymentDate:null, otherExpenses:[],
+      processingCharge:0, sonRemitaAmount:0, sonRemitaRef:null
+    }, c.financial||{})
+  });
+}
+async function saveContainers(list){ state.containers = list; try{ await window.storage.set('containers', JSON.stringify(list), true); }catch(e){console.error(e);} }
+async function loadLog(){ try{ const r = await window.storage.get('activity-log', true); return r? JSON.parse(r.value) : []; }catch(e){ return []; } }
+async function saveLog(){ try{ await window.storage.set('activity-log', JSON.stringify(state.log), true); }catch(e){} }
+async function pushLog(msg, dept, security){
+  state.log.unshift({id:'l'+Date.now()+Math.random().toString(16).slice(2), msg, t:new Date().toISOString(), dept: dept||null, ack:[], security:!!security});
+  state.log = state.log.slice(0,200);
+  await saveLog();
+}
+function pushSecurityLog(msg){ return pushLog(msg, null, true); }
+
+async function loadUsers(){
+  let list;
+  try{ const r = await window.storage.get('users', true); list = r? JSON.parse(r.value) : seedUsers(); }
+  catch(e){ list = seedUsers(); }
+  return list.map(normalizeUser);
+}
+function normalizeUser(u){
+  return Object.assign({
+    uniqueId: genUniqueId(u.name), stationedAt:'BILBT Main Yard', status:'active',
+    corporateRegNumber:null, idType:null, idImage:null, idFileName:null, profilePic:null,
+    forceReauth:false, lastLoginDevice:null, lastLoginDate:null, verifiedBy:null, verifiedDate:null, phone:null
+  }, u);
+}
+async function saveUsers(list){ state.users = list; try{ await window.storage.set('users', JSON.stringify(list), true); }catch(e){} }
+
+async function loadSettings(){
+  try{ const r = await window.storage.get('org-settings', true); return r? Object.assign({}, DEFAULT_SETTINGS, JSON.parse(r.value)) : JSON.parse(JSON.stringify(DEFAULT_SETTINGS)); }
+  catch(e){ return JSON.parse(JSON.stringify(DEFAULT_SETTINGS)); }
+}
+async function saveSettings(){ try{ await window.storage.set('org-settings', JSON.stringify(state.settings), true); }catch(e){} }
+
+async function loadReferrals(){ try{ const r = await window.storage.get('referrals', true); return r? JSON.parse(r.value):[]; }catch(e){ return []; } }
+async function saveReferrals(){ try{ await window.storage.set('referrals', JSON.stringify(state.referrals), true); }catch(e){} }
+
+async function loadMessages(){ try{ const r = await window.storage.get('messages', true); return r? JSON.parse(r.value):[]; }catch(e){ return []; } }
+async function saveMessages(){ try{ await window.storage.set('messages', JSON.stringify(state.messages), true); }catch(e){} }
+
+async function resetData(){
+  if(!confirm('Erase all shared demo data (jobs, accounts, activity, settings) and reseed? This affects everyone using this server.')) return;
+  const seedAccounts = seedUsers().map(u=>({id:u.id, email:u.login, password:u.password||'demo123'}));
+  const seedUserRecords = seedUsers().map(u=>{ const c=normalizeUser(Object.assign({},u)); delete c.password; return c; });
+  try{
+    await apiFetch('/api/auth/reset-seed-credentials', {method:'POST', body: JSON.stringify({accounts: seedAccounts})});
+    await saveContainers(seedContainers().map(normalizeContainer));
+    await saveUsers(seedUserRecords);
+    state.log = []; await saveLog();
+    state.referrals = []; await saveReferrals();
+    state.messages = []; await saveMessages();
+    state.settings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS)); await saveSettings();
+  }catch(err){
+    toast('Could not reset demo data: ' + (err.message||'sign in as BILBT Admin first, then reset from inside the app.'));
+    return;
+  }
+  toast('Demo data reset.');
+  if(state.role) renderApp(); else renderLogin();
+}
+
+/* ========================= SEED DATA ========================= */
+function daysAgo(n){ const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString(); }
+function mkHistory(uptoIdx, startDaysAgo){
+  const hist=[]; let day=startDaysAgo;
+  for(let i=0;i<=uptoIdx;i++){ hist.push({stage:i, t:daysAgo(day), user: i<9?'Blessing Eze (Documentation)':'Emeka Okafor (Operations)'}); day -= (1+Math.floor(Math.random()*2)); }
+  return hist.reverse();
+}
+function genUniqueId(name){
+  const letters = (name||'BIL').replace(/[^A-Za-z\s]/g,'').split(/\s+/).filter(Boolean).map(w=>w[0]).join('').toUpperCase().slice(0,3) || 'BIL';
+  const num = Math.floor(1000+Math.random()*9000);
+  return letters+'-'+num;
+}
+function seedUsers(){
+  return [
+    {id:'u1', name:'Ngozi Adeyemi', login:'ngozi@adeyemiglobal.com', phone:'08031112222', password:'demo123', org:'Adeyemi Global Trading Ltd.', role:'importer', department:null, corporateRegNumber:'RC-482910'},
+    {id:'u2', name:'Tunde Bello', login:'tunde@bellomerchants.com', phone:'08032223333', password:'demo123', org:'Bello Merchants Ltd.', role:'importer', department:null, corporateRegNumber:'RC-509213'},
+    {id:'u3', name:'Chidi Okonkwo', login:'chidi@okonkwologistics.com', phone:'08033334444', password:'demo123', org:'Okonkwo & Sons Logistics', role:'agent', department:null, corporateRegNumber:'RC-410932'},
+    {id:'u4', name:'Fatima Sule', login:'fatima@sulefreight.com', phone:'08034445555', password:'demo123', org:'Sule Freight Services', role:'agent', department:null, corporateRegNumber:'RC-398211'},
+    {id:'u5', name:'Emeka Okafor', login:'emeka@belburge.com', phone:'08035556666', password:'demo123', org:'Belburge International Limited', role:'admin', department:'Operations', stationedAt:'BILBT Main Yard'},
+    {id:'u6', name:'Blessing Eze', login:'blessing@belburge.com', phone:'08036667777', password:'demo123', org:'Belburge International Limited', role:'admin', department:'Documentation', stationedAt:'Onne Port Area II Command'},
+    {id:'u7', name:'Ifeanyi Umeh', login:'ifeanyi@belburge.com', phone:'08037778888', password:'demo123', org:'Belburge International Limited', role:'admin', department:'DTI', stationedAt:'Onne Port Area II Command'},
+    {id:'u8', name:'Grace Nwosu', login:'grace@belburge.com', phone:'08038889999', password:'demo123', org:'Belburge International Limited', role:'admin', department:'Transport', stationedAt:'BILBT Main Yard'},
+    {id:'u9', name:'Uche Nnamdi', login:'uche@belburge.com', phone:'08030001111', password:'demo123', org:'Belburge International Limited', role:'admin', department:'Field Staff', stationedAt:'WACT Office'},
+    {id:'u10', name:'Adaeze Obi', login:'adaeze@belburge.com', phone:'08030002222', password:'demo123', org:'Belburge International Limited', role:'admin', department:'Admin', stationedAt:'BILBT Main Yard'},
+    {id:'u11', name:'Ifeoma Chukwuma', login:'ifeoma@belburge.com', phone:'08030003333', password:'demo123', org:'Belburge International Limited', role:'admin', department:'Accountant', stationedAt:'BILBT Main Yard'}
+  ];
+}
+function seedContainers(){
+  return [
+    {id:'c1', containerNumber:'MAEU1234567', billOfLading:'BL-88291', size:'40ft', item:'Consumer Electronics',
+      destination:'Lagos Mainland Warehouse', owner:null, agent:'Chidi Okonkwo',
+      bolComplete:true, aNumber:'A-220145', cNumber:'C-990214', stageIdx:10, history:mkHistory(10,18),
+      alerts:[{id:'a1', type:'NAFDAC', desc:'Potential mismatch in product compliance documentation for imported electronics.', status:'active', dateDetected:daysAgo(2)}],
+      documents:[{name:'Bill_of_Lading_88291.pdf', type:'Bill of Lading', uploadedBy:'Blessing Eze', date:daysAgo(18), sizeKB:212},
+                 {name:'Transfer_Letter_CPC.pdf', type:'Transfer Letter', uploadedBy:'Blessing Eze', date:daysAgo(12), sizeKB:95}],
+      financial:{mptRating:145000, shippingRating:210000, bilbtCharges:65000, clearingExpenses:38000, transportation:0, manifestExpenses:12000, paarExpenses:9000, customsDuties:380000, dutyStatus:'paid', dutyPaymentRef:'RCPT-77213', dutyPaymentDate:daysAgo(9), otherExpenses:[]},
+      detentionStart:null, steppedDown:{status:false,comment:'',by:null,date:null}, progressNotes:[],
+      transireSubmittedDate:daysAgo(16), deliveredDate:null, createdAt:daysAgo(18)},
+    {id:'c2', containerNumber:'TCLU9988771', billOfLading:'BL-88112', size:'20ft', item:'Industrial Equipment Parts',
+      destination:'Apapa Distribution Hub', owner:'Ngozi Adeyemi', agent:null,
+      bolComplete:true, aNumber:'A-219981', cNumber:'C-990101', stageIdx:13, history:mkHistory(13,24),
+      alerts:[], documents:[{name:'Bill_of_Lading_88112.pdf', type:'Bill of Lading', uploadedBy:'Blessing Eze', date:daysAgo(24), sizeKB:180},
+                 {name:'Inspection_Act.pdf', type:'Inspection Act', uploadedBy:'Emeka Okafor', date:daysAgo(6), sizeKB:140},
+                 {name:'Exit_Note.pdf', type:'Exit Note', uploadedBy:'Emeka Okafor', date:daysAgo(3), sizeKB:60}],
+      financial:{mptRating:98000, shippingRating:150000, bilbtCharges:52000, clearingExpenses:26000, transportation:35000, manifestExpenses:8000, paarExpenses:7000, customsDuties:210000, dutyStatus:'paid', dutyPaymentRef:'RCPT-77104', dutyPaymentDate:daysAgo(5), otherExpenses:[]},
+      detentionStart:daysAgo(3), steppedDown:{status:false,comment:'',by:null,date:null}, progressNotes:[],
+      sealNumber:'SL-88412', sealNumberDelivery:'SL-88412', deliveryLocation:'Apapa Distribution Hub, Warehouse 4',
+      transireSubmittedDate:daysAgo(22), deliveredDate:daysAgo(2), createdAt:daysAgo(24)},
+    {id:'c3', containerNumber:'CMAU5544332', billOfLading:'BL-88405', size:'40ft', item:'Textiles',
+      destination:'Kano Retail Chain', owner:null, agent:'Fatima Sule',
+      bolComplete:true, aNumber:'A-220310', cNumber:'C-990340', stageIdx:2, history:mkHistory(2,5),
+      alerts:[], documents:[{name:'Bill_of_Lading_88405.pdf', type:'Bill of Lading', uploadedBy:'Blessing Eze', date:daysAgo(5), sizeKB:175}],
+      financial:{mptRating:120000, shippingRating:180000, bilbtCharges:0, clearingExpenses:0, transportation:0, manifestExpenses:0, paarExpenses:0, customsDuties:0, dutyStatus:'pending', dutyPaymentRef:null, dutyPaymentDate:null, otherExpenses:[]},
+      detentionStart:null, steppedDown:{status:false,comment:'',by:null,date:null}, progressNotes:[],
+      transireSubmittedDate:null, deliveredDate:null, createdAt:daysAgo(5)},
+    {id:'c4', containerNumber:'HLXU7788990', billOfLading:'BL-88500', size:'20ft', item:'Packaged Foods',
+      destination:'Port Harcourt Cold Storage', owner:'Tunde Bello', agent:null,
+      bolComplete:true, aNumber:'A-220401', cNumber:'C-990412', stageIdx:6, history:mkHistory(6,9),
+      alerts:[{id:'a2', type:'SON', desc:'Under-declaration flagged on packaged food consignment; product certificate required.', status:'active', dateDetected:daysAgo(1)}],
+      documents:[{name:'Bill_of_Lading_88500.pdf', type:'Bill of Lading', uploadedBy:'Blessing Eze', date:daysAgo(9), sizeKB:150}],
+      financial:{mptRating:110000, shippingRating:160000, bilbtCharges:0, clearingExpenses:0, transportation:0, manifestExpenses:0, paarExpenses:0, customsDuties:0, dutyStatus:'pending', dutyPaymentRef:null, dutyPaymentDate:null, otherExpenses:[]},
+      detentionStart:null, steppedDown:{status:false,comment:'',by:null,date:null}, progressNotes:[],
+      transireSubmittedDate:daysAgo(8), deliveredDate:null, createdAt:daysAgo(9)},
+    {id:'c5', containerNumber:'MSCU3321567', billOfLading:'BL-87990', size:'40ft', item:'Auto Parts',
+      destination:'Onitsha Main Market', owner:null, agent:'Fatima Sule',
+      bolComplete:true, aNumber:'A-218750', cNumber:'C-989870', stageIdx:14, history:mkHistory(14,30),
+      alerts:[], documents:[{name:'Bill_of_Lading_87990.pdf', type:'Bill of Lading', uploadedBy:'Blessing Eze', date:daysAgo(30), sizeKB:200},
+                 {name:'Inspection_Act.pdf', type:'Inspection Act', uploadedBy:'Emeka Okafor', date:daysAgo(11), sizeKB:130},
+                 {name:'Exit_Note.pdf', type:'Exit Note', uploadedBy:'Emeka Okafor', date:daysAgo(9), sizeKB:58}],
+      financial:{mptRating:132000, shippingRating:175000, bilbtCharges:60000, clearingExpenses:31000, transportation:42000, manifestExpenses:10000, paarExpenses:8000, customsDuties:295000, dutyStatus:'paid', dutyPaymentRef:'RCPT-76890', dutyPaymentDate:daysAgo(10), otherExpenses:[]},
+      detentionStart:daysAgo(9), steppedDown:{status:false,comment:'',by:null,date:null}, progressNotes:[],
+      sealNumber:'SL-90211', sealNumberDelivery:'SL-90277', deliveryLocation:'Onitsha Main Market, Shed 12',
+      transireSubmittedDate:daysAgo(28), deliveredDate:daysAgo(1), createdAt:daysAgo(30)},
+    {id:'c6', containerNumber:'OOLU6612345', billOfLading:'BL-88602', size:'40ft', item:'Building Materials',
+      destination:'Port Harcourt Construction Site', owner:'Tunde Bello', agent:null,
+      bolComplete:true, aNumber:'A-220502', cNumber:'C-990530', stageIdx:9, history:mkHistory(9,13),
+      alerts:[], documents:[{name:'Bill_of_Lading_88602.pdf', type:'Bill of Lading', uploadedBy:'Blessing Eze', date:daysAgo(13), sizeKB:190}],
+      financial:{mptRating:140000, shippingRating:190000, bilbtCharges:40000, clearingExpenses:18000, transportation:0, manifestExpenses:9000, paarExpenses:6000, customsDuties:0, dutyStatus:'pending', dutyPaymentRef:null, dutyPaymentDate:null, otherExpenses:[]},
+      detentionStart:null, steppedDown:{status:false,comment:'',by:null,date:null},
+      progressNotes:[{text:'Transfer letter still with CPC gate desk — expected to clear tomorrow.', by:'Emeka Okafor', date:daysAgo(1)}],
+      transireSubmittedDate:daysAgo(12), deliveredDate:null, createdAt:daysAgo(13)},
+    {id:'c7', containerNumber:'JXLU4487721', billOfLading:'BL-88711', size:'20ft', item:'Machine Spare Parts',
+      destination:'Port Harcourt Industrial Layout', owner:null, agent:'Fatima Sule',
+      bolComplete:false, aNumber:null, cNumber:null, stageIdx:0, history:[{stage:0, t:daysAgo(1), user:'Blessing Eze'}],
+      alerts:[], documents:[{name:'Bill_of_Lading_88711.pdf', type:'Bill of Lading', uploadedBy:'Blessing Eze', date:daysAgo(1), sizeKB:160}],
+      financial:{mptRating:0, shippingRating:0, bilbtCharges:0, clearingExpenses:0, transportation:0, manifestExpenses:0, paarExpenses:0, customsDuties:0, dutyStatus:'pending', dutyPaymentRef:null, dutyPaymentDate:null, otherExpenses:[]},
+      detentionStart:null, steppedDown:{status:false,comment:'',by:null,date:null}, progressNotes:[],
+      transireSubmittedDate:null, deliveredDate:null, createdAt:daysAgo(1)},
+    {id:'c8', containerNumber:'FCIU2210987', billOfLading:'BL-87700', size:'20ft', item:'Furniture',
+      destination:'Lagos Mainland Warehouse', owner:'Ngozi Adeyemi', agent:null,
+      bolComplete:true, aNumber:'A-217700', cNumber:'C-988700', stageIdx:4, history:mkHistory(4,16),
+      alerts:[], documents:[{name:'Bill_of_Lading_87700.pdf', type:'Bill of Lading', uploadedBy:'Blessing Eze', date:daysAgo(16), sizeKB:170}],
+      financial:{mptRating:115000, shippingRating:165000, bilbtCharges:0, clearingExpenses:15000, transportation:0, manifestExpenses:0, paarExpenses:0, customsDuties:0, dutyStatus:'pending', dutyPaymentRef:null, dutyPaymentDate:null, otherExpenses:[]},
+      detentionStart:null,
+      steppedDown:{status:true, comment:'Consignee could not produce a valid Form M for this shipment. Importer requested the container be withdrawn from active clearance and re-exported. Awaiting resolution with shipping line before this can restart.', by:'Emeka Okafor', date:daysAgo(2)},
+      progressNotes:[], transireSubmittedDate:daysAgo(15), deliveredDate:null, createdAt:daysAgo(16)}
+  ];
+}
+
+/* ========================= HELPERS ========================= */
+function fmtNaira(n){ return '₦' + Number(n||0).toLocaleString('en-NG'); }
+function fmtDate(iso){ if(!iso) return '—'; const d=new Date(iso); return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
+function fmtDateTime(iso){ const d=new Date(iso); return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) + ' · ' + d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }
+function byId(id){ return state.containers.find(c=>c.id===id); }
+function userById(id){ return state.users.find(u=>u.id===id); }
+function toast(msg){
+  const wrap = document.getElementById('toast-wrap');
+  const el = document.createElement('div'); el.className='toast'; el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300); }, 3800);
+}
+function visibleContainers(){
+  if(state.role==='admin') return state.containers;
+  if(state.role==='importer') return state.containers.filter(c=>c.owner===state.person);
+  if(state.role==='agent') return state.containers.filter(c=>c.agent===state.person);
+  return [];
+}
+function activeAlertCount(list){ return list.reduce((n,c)=>n+c.alerts.filter(a=>a.status==='active').length,0); }
+function daysBetween(iso){ return Math.floor((Date.now()-new Date(iso).getTime())/86400000); }
+function uniqueNames(list, key){ return [...new Set(list.map(c=>c[key]))].filter(Boolean); }
+function canSeeFenBol(){ return state.role==='admin' && FEN_BOL_DEPTS.includes(state.department); }
+function canSeeFinance(){ return state.role==='admin' && FINANCE_DEPTS.includes(state.department); }
+function isSuperAdmin(){ return state.role==='admin' && state.department==='Admin'; }
+function ownerAgentLabel(c){
+  const parts = [];
+  if(c.owner) parts.push('Importer: '+c.owner);
+  if(c.agent) parts.push('Agent: '+c.agent);
+  return parts.join(' · ') || 'Unlinked job';
+}
+function allowedStagesFor(dept){
+  if(dept==='Admin') return STAGES.map((s,i)=>i);
+  return (state.settings.deptStageAccess && state.settings.deptStageAccess[dept]) || [];
+}
+function canAdvanceAnyStage(){ return isSuperAdmin() || allowedStagesFor(state.department).length>0; }
+function masterHoldActive(){ return !!(state.settings && state.settings.masterHold); }
+function checkMasterHold(){
+  if(masterHoldActive() && !isSuperAdmin()){ toast('Master Hold is active — Admin has frozen this action across the terminal.'); return true; }
+  return false;
+}
+function getPermissions(dept){
+  if(dept==='Admin') return {
+    'Create First Entry Note':true,'Complete Book of Life':true,'Advance any container stage':true,
+    'Force-advance / override sequence':true,'Approve or reject invoices':true,'Record duty payments':true,
+    'Step a container down':true,'Manage staff accounts':true,'Approve new user verification':true,
+    'Edit system settings & Master Hold':true,'Waive demurrage fees':true
+  };
+  const stages = allowedStagesFor(dept);
+  return {
+    'Create First Entry Note': FEN_BOL_DEPTS.includes(dept),
+    'Complete Book of Life': FEN_BOL_DEPTS.includes(dept),
+    'Advance container stage': stages.length>0,
+    'Force-advance / override sequence': false,
+    'Upload / edit invoices': FINANCE_DEPTS.includes(dept),
+    'Approve or reject invoices': false,
+    'Record duty payments': FINANCE_DEPTS.includes(dept),
+    'Step a container down': true,
+    'Manage staff accounts': false,
+    'Approve new user verification': false,
+    'Edit system settings & Master Hold': false,
+    'Waive demurrage fees': false
+  };
+}
+
+/* ========================= AUTH ========================= */
+function renderLogin(){
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('app-shell').style.display='none';
+  state.authView = getApiBase() ? 'welcome' : 'server-setup'; state.authError='';
+  renderAuthCard();
+}
+function setAuthView(v){ state.authView=v; state.authError=''; renderAuthCard(); }
+function renderAuthCard(){
+  const card = document.getElementById('auth-card');
+  if(state.authView==='server-setup') card.innerHTML = serverSetupHTML();
+  else if(state.authView==='welcome') card.innerHTML = welcomeHTML();
+  else if(state.authView==='signin') card.innerHTML = signInHTML();
+  else if(state.authView==='register') card.innerHTML = registerHTML();
+  else if(state.authView==='otp') card.innerHTML = otpHTML();
+  else if(state.authView==='idupload') card.innerHTML = idUploadHTML();
+  else if(state.authView==='pending') card.innerHTML = pendingHTML();
+}
+function serverSetupHTML(){
+  return `
+    <h2>Connect to your server</h2>
+    <div class="lede">This app now stores its data on a real server instead of just this browser, so every device sees the same jobs. Paste the server's web address below (ask whoever deployed it, or see the backend's README).</div>
+    ${state.authError?`<div class="err-text">${state.authError}</div>`:''}
+    <form id="server-setup-form">
+      <div class="field"><label>Server URL</label><input type="url" id="setup-url" required placeholder="https://your-backend.onrender.com" value="${getApiBase()||''}"></div>
+      <button class="btn full" type="submit">Connect</button>
+    </form>
+    <div class="fhint" style="margin-top:10px;">This is saved on this device only — every browser/device needs to be told the server URL once.</div>`;
+}
+function welcomeHTML(){
+  return `
+    <p class="welcome-pitch">Track every container from Customs Processing through delivery — one system for importers, clearing agents, and BILBT terminal staff.</p>
+    <div class="welcome-actions">
+      <button class="btn full" onclick="setAuthView('signin')">Sign In</button>
+      <button class="btn full secondary" onclick="setAuthView('register')">Create an Account</button>
+    </div>
+    <div class="demo-box">Demo accounts are pre-loaded — password <b>demo123</b> for all of them. Try any role from the Sign In screen, or register your own.
+      <br><button class="btn ghost small" style="text-decoration:underline;padding:6px 0 0;" onclick="resetData()">Reset demo data</button>
+    </div>`;
+}
+function signInHTML(){
+  return `
+    <h2>Sign In</h2>
+    <div class="lede">Enter your role and account details to continue.</div>
+    ${state.authError?`<div class="err-text">${state.authError}</div>`:''}
+    <form id="signin-form">
+      <div class="field"><label>Role</label>
+        <select id="s-role"><option value="importer">Importer</option><option value="agent">Clearing Agent</option><option value="admin">Admin</option></select></div>
+      <div class="field"><label>Email or Username</label><input type="text" id="s-login" required placeholder="you@example.com"></div>
+      <div class="field"><label>Password</label><input type="password" id="s-password" required placeholder="••••••••"></div>
+      <button class="btn full" type="submit">Sign In</button>
+    </form>
+    <div class="auth-foot">New here? <button onclick="setAuthView('register')">Create an account</button></div>
+    <div class="auth-foot"><button onclick="setAuthView('welcome')">‹ Back</button></div>`;
+}
+function registerHTML(){
+  const d = state.regDraft || {};
+  return `
+    <h2>Create Account</h2>
+    <div class="lede">Set up access for an importer, clearing agent, or BILBT staff member.</div>
+    ${state.authError?`<div class="err-text">${state.authError}</div>`:''}
+    <form id="register-form">
+      <div class="field"><label>Full name</label><input type="text" id="r-name" required placeholder="e.g. Amaka Chukwu" value="${d.name||''}"></div>
+      <div class="field"><label>Email</label><input type="email" id="r-email" required placeholder="you@example.com" value="${d.email||''}"></div>
+      <div class="field"><label>Phone number</label><input type="tel" id="r-phone" required placeholder="080XXXXXXXX" value="${d.phone||''}">
+        <div class="fhint">We will use this to verify your account with a one-time code.</div></div>
+      <div class="form-grid">
+        <div class="field"><label>Password</label><input type="password" id="r-password" required placeholder="At least 6 characters"></div>
+        <div class="field"><label>Confirm password</label><input type="password" id="r-password2" required placeholder="Repeat password"></div>
+      </div>
+      <div class="field"><label>I am a</label>
+        <select id="r-role" onchange="onRegRoleChange()"><option value="importer" ${d.role==='importer'?'selected':''}>Importer</option><option value="agent" ${d.role==='agent'?'selected':''}>Clearing Agent</option><option value="admin" ${d.role==='admin'?'selected':''}>Admin (BILBT staff)</option></select></div>
+      <div class="field" id="r-org-field"><label>Company / Organisation</label><input type="text" id="r-org" placeholder="e.g. Adeyemi Global Trading Ltd." value="${d.org||''}"></div>
+      <div class="field" id="r-cac-field"><label>Corporate Registration Number (CAC / RC)</label><input type="text" id="r-cac" placeholder="e.g. RC-482910" value="${d.corporateRegNumber||''}"></div>
+      <div class="field" id="r-dept-field" style="display:none;"><label>Department</label>
+        <select id="r-dept">${DEPARTMENTS.map(dp=>`<option ${dp===d.department?'selected':''}>${dp}</option>`).join('')}</select>
+        <div class="fhint">Admin, Documentation, and DTI can see First Entry Note and Book of Life. Accountant sees Financial Reconciliation. All departments can use End to End.</div></div>
+      <button class="btn full" type="submit">Continue</button>
+    </form>
+    <div class="auth-foot">Already have an account? <button onclick="setAuthView('signin')">Sign in</button></div>
+    <div class="auth-foot"><button onclick="setAuthView('welcome')">‹ Back</button></div>`;
+}
+function onRegRoleChange(){
+  const role = document.getElementById('r-role').value;
+  document.getElementById('r-dept-field').style.display = role==='admin' ? 'block' : 'none';
+  document.getElementById('r-org-field').style.display = role==='admin' ? 'none' : 'block';
+  document.getElementById('r-cac-field').style.display = role==='admin' ? 'none' : 'block';
+}
+function otpHTML(){
+  const d = state.regDraft;
+  if(!state.otp){
+    return `
+      <h2>Verify your account</h2>
+      <div class="lede">Choose where to receive your one-time verification code.</div>
+      <div class="field"><label>Send code to</label>
+        <select id="otp-channel">
+          <option value="email">Email — ${d.email}</option>
+          <option value="phone">Phone — ${d.phone}</option>
+        </select></div>
+      <button class="btn full" onclick="sendOtp()">Send code</button>
+      <div class="auth-foot"><button onclick="setAuthView('register')">‹ Back</button></div>`;
+  }
+  return `
+    <h2>Enter verification code</h2>
+    <div class="lede">We sent a 6-digit code to your ${state.otpChannel==='email'?'email':'phone number'}.</div>
+    <div class="otp-banner">Demo mode — no real ${state.otpChannel==='email'?'email':'SMS'} is sent. Your code is <b>${state.otp}</b>.</div>
+    ${state.authError?`<div class="err-text">${state.authError}</div>`:''}
+    <div class="field"><label>6-digit code</label><input type="text" id="r-otp" maxlength="6" placeholder="••••••"></div>
+    <button class="btn full" onclick="verifyOtp()">Verify code</button>
+    <button class="btn ghost full" style="margin-top:6px;" onclick="resendOtp()">Resend code</button>
+    <div class="auth-foot"><button onclick="setAuthView('register')">‹ Use different details</button></div>`;
+}
+function sendOtp(){
+  const channel = document.getElementById('otp-channel').value;
+  state.otpChannel = channel;
+  state.otp = String(Math.floor(100000+Math.random()*900000));
+  renderAuthCard();
+}
+function resendOtp(){ state.otp = String(Math.floor(100000+Math.random()*900000)); state.authError=''; renderAuthCard(); toast('New code sent.'); }
+function idUploadHTML(){
+  const d = state.regDraft;
+  const options = ID_TYPE_OPTIONS[d.role] || ID_TYPE_OPTIONS.importer;
+  const roleLabel = d.role==='importer'?'Importer':(d.role==='agent'?'Clearing Agent':'BILBT staff member');
+  return `
+    <h2>Identity verification</h2>
+    <div class="lede">As a ${roleLabel}, upload a clear photo of one accepted ID before your account can be activated. BILBT Admin reviews this before you get access.</div>
+    ${state.authError?`<div class="err-text">${state.authError}</div>`:''}
+    <div class="field"><label>ID type</label><select id="id-type">${options.map(o=>`<option>${o}</option>`).join('')}<option>Driving License</option></select></div>
+    <div class="field"><label>Upload ID photo</label><input type="file" id="id-file" accept="image/*,application/pdf"></div>
+    <button class="btn full" onclick="submitIdVerification()">Submit for verification</button>
+    <div class="hint">Stored in this shared demo database only — a production system would use an encrypted document store; this prototype does not implement real encryption.</div>`;
+}
+async function submitIdVerification(){
+  const idType = document.getElementById('id-type').value;
+  const fileInput = document.getElementById('id-file');
+  const file = fileInput.files && fileInput.files[0];
+  let idImage = null, idFileName = null;
+  if(file){
+    idFileName = file.name;
+    if(file.size < 350000){
+      try{ idImage = await new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); }); }
+      catch(e){ idImage = null; }
+    }
+  } else {
+    state.authError = 'Please choose an ID photo to upload.'; renderAuthCard(); return;
+  }
+  const d = state.regDraft;
+  const newId = 'u'+Date.now();
+  try{
+    await apiFetch('/api/auth/register', {method:'POST', body: JSON.stringify({id:newId, email:d.email, password:d.password})});
+  }catch(err){
+    state.authError = (err && err.status===409) ? 'That email is already registered. Try signing in.' : (err.message||'Could not reach the server.');
+    renderAuthCard(); return;
+  }
+  const user = normalizeUser({
+    id:newId, name:d.name, login:d.email, phone:d.phone, org:d.org,
+    role:d.role, department:d.department, corporateRegNumber:d.corporateRegNumber||null,
+    idType, idFileName, idImage, status:'pending_verification'
+  });
+  state.users.push(user);
+  await saveUsers(state.users);
+  await pushSecurityLog(`New self-registration awaiting verification: ${user.name} (${ROLE_META[user.role].name}${user.department?', '+user.department:''})`);
+  setAuthView('pending');
+}
+function pendingHTML(){
+  return `
+    <h2>Submitted for review</h2>
+    <p style="font-size:13px;color:var(--ink-soft);">Your account and ID have been submitted. BILBT Admin will review your details and activate your account — you'll be able to sign in once approved.</p>
+    <button class="btn full" onclick="setAuthView('welcome')">Back to welcome</button>`;
+}
+document.addEventListener('submit', async function(e){
+  if(e.target && e.target.id==='signin-form'){
+    e.preventDefault();
+    const role = document.getElementById('s-role').value;
+    const login = document.getElementById('s-login').value.trim().toLowerCase();
+    const password = document.getElementById('s-password').value;
+    let resp;
+    try{
+      resp = await apiFetch('/api/auth/login', {method:'POST', body: JSON.stringify({email: login, password: password})});
+    }catch(err){
+      state.authError = (err.status===401) ? 'No matching account. Check the role, email or username, and password.' : (err.message||'Could not reach the server.');
+      renderAuthCard(); return;
+    }
+    setAuthToken(resp.token);
+    let users;
+    try{ users = await loadUsers(); }catch(e){ state.authError='Signed in, but could not load account details. Try again.'; setAuthToken(''); renderAuthCard(); return; }
+    const u = users.find(x=>x.id===resp.userId);
+    if(!u || u.role!==role){ state.authError='No matching account. Check the role, email or username, and password.'; setAuthToken(''); renderAuthCard(); return; }
+    if(u.status==='pending_verification'){ state.authError='This account is awaiting BILBT Admin verification.'; setAuthToken(''); renderAuthCard(); return; }
+    if(u.status==='suspended'){ state.authError='This account has been suspended. Contact BILBT Admin.'; setAuthToken(''); renderAuthCard(); return; }
+    if(u.status==='deactivated'){ state.authError='This account has been deactivated.'; setAuthToken(''); renderAuthCard(); return; }
+    state.users = users;
+    await finishLogin(u.id);
+  }
+  if(e.target && e.target.id==='server-setup-form'){
+    e.preventDefault();
+    const url = document.getElementById('setup-url').value.trim();
+    if(!url){ return; }
+    setApiBase(url);
+    state.authError='';
+    await tryBootstrapServer();
+    setAuthView('welcome');
+  }
+  if(e.target && e.target.id==='register-form'){
+    e.preventDefault();
+    const name = document.getElementById('r-name').value.trim();
+    const email = document.getElementById('r-email').value.trim();
+    const phone = document.getElementById('r-phone').value.trim();
+    const password = document.getElementById('r-password').value;
+    const password2 = document.getElementById('r-password2').value;
+    const role = document.getElementById('r-role').value;
+    const org = document.getElementById('r-org').value.trim() || (role==='admin' ? 'Belburge International Limited' : 'Independent');
+    const corporateRegNumber = role!=='admin' ? document.getElementById('r-cac').value.trim() : null;
+    const department = role==='admin' ? document.getElementById('r-dept').value : null;
+    if(!name || !email){ state.authError='Full name and email are required.'; renderAuthCard(); return; }
+    if(!/^0\d{10}$/.test(phone)){ state.authError='Enter a valid 11-digit phone number starting with 0.'; renderAuthCard(); return; }
+    const minLen = (state.settings && state.settings.minPasswordLength) || 6;
+    if(password.length<minLen){ state.authError=`Password must be at least ${minLen} characters.`; renderAuthCard(); return; }
+    if(password!==password2){ state.authError='Passwords do not match.'; renderAuthCard(); return; }
+    state.regDraft = {name, email, phone, password, org, role, department, corporateRegNumber};
+    state.otp = null; state.otpChannel = null;
+    setAuthView('otp');
+  }
+});
+async function verifyOtp(){
+  const code = document.getElementById('r-otp').value.trim();
+  if(code !== state.otp){ state.authError='Incorrect code. Please try again.'; renderAuthCard(); return; }
+  setAuthView('idupload');
+}
+async function finishLogin(userId){
+  const u = state.users.find(x=>x.id===userId);
+  if(!u) return;
+  u.lastLoginDevice = navigator.userAgent;
+  u.lastLoginDate = new Date().toISOString();
+  await saveUsers(state.users);
+  state.role = u.role; state.person = u.name; state.userId = u.id; state.department = u.department;
+  state.activeTab='dashboard';
+  state.containers = await loadContainers();
+  state.log = await loadLog();
+  state.referrals = await loadReferrals();
+  state.messages = await loadMessages();
+  renderApp();
+  startIdleTimer();
+  startLiveSync();
+}
+function logout(){
+  stopIdleTimer();
+  stopLiveSync();
+  setAuthToken('');
+  state.role=null; state.person=null; state.department=null; state.openContainerId=null;
+  document.getElementById('modal-bg').classList.remove('open');
+  closeMoreSheet();
+  renderLogin();
+}
+function startIdleTimer(){
+  stopIdleTimer();
+  const mins = (state.settings && state.settings.idleTimeoutMinutes) || 15;
+  const reset = ()=>{
+    clearTimeout(state.idleTimer);
+    state.idleTimer = setTimeout(()=>{ toast('Logged out due to inactivity.'); logout(); }, mins*60000);
+  };
+  ['mousemove','keydown','click','scroll'].forEach(evt=>document.addEventListener(evt, reset));
+  reset();
+}
+function stopIdleTimer(){ if(state.idleTimer) clearTimeout(state.idleTimer); }
+
+/* ========================= PROFILE ========================= */
+function openProfile(uid){
+  state.profileTargetId = uid;
+  const u = userById(uid);
+  const isSelf = uid===state.userId;
+  const editingAsAdmin = !isSelf && isSuperAdmin();
+  const canEditName = isSelf ? false : editingAsAdmin;
+  const nameNote = isSelf
+    ? 'Name cannot be changed here since it links your existing jobs. Contact BILBT admin for a name correction.'
+    : `You are editing this profile as BILBT Admin — changes apply immediately, including relinking their existing jobs.`;
+  const perms = u.role==='admin' ? getPermissions(u.department) : null;
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-head"><h2 style="font-size:18px;">${isSelf?'My profile':'Edit profile — '+u.name}</h2><button class="btn ghost" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div style="display:flex;gap:14px;align-items:center;margin-bottom:16px;">
+        ${u.profilePic?`<img src="${u.profilePic}" class="avatar">`:`<div class="avatar">${(u.name||'?').charAt(0)}</div>`}
+        <div>
+          <div style="font-weight:700;">${u.name}</div>
+          <div class="tag-line mono">${u.uniqueId}</div>
+          <div class="tag-line">${ROLE_META[u.role].name}${u.department?' · '+u.department:''}</div>
+        </div>
+      </div>
+      ${(isSelf||editingAsAdmin)?`<div class="field"><label>Profile picture</label><input type="file" id="p-pic" accept="image/*"></div>`:''}
+      <div class="field"><label>Full name</label><input type="text" id="p-name" value="${u.name}" ${canEditName?'':'disabled'}></div>
+      <div class="field"><label>Email or username</label><input type="text" id="p-login" value="${u.login}" ${(isSelf||editingAsAdmin)?'':'disabled'}></div>
+      <div class="field"><label>Phone number</label><input type="tel" id="p-phone" value="${u.phone||''}" ${(isSelf||editingAsAdmin)?'':'disabled'}></div>
+      <div class="field"><label>Company / Organisation</label><input type="text" id="p-org" value="${u.org}" ${(isSelf||editingAsAdmin)?'':'disabled'}></div>
+      ${u.corporateRegNumber!==undefined && u.role!=='admin' ? `<div class="field"><label>Corporate Registration Number</label><input type="text" id="p-cac" value="${u.corporateRegNumber||''}" ${editingAsAdmin?'':'disabled'}></div>`:''}
+      <div class="field"><label>Currently stationed at</label>
+        <select id="p-station" ${(isSelf||editingAsAdmin)?'':'disabled'}>${STATIONS.map(s=>`<option ${s===u.stationedAt?'selected':''}>${s}</option>`).join('')}</select></div>
+      ${u.role==='admin' && editingAsAdmin ? `<div class="field"><label>Department</label><select id="p-dept">${DEPARTMENTS.map(d=>`<option ${d===u.department?'selected':''}>${d}</option>`).join('')}</select></div>`:''}
+      <button class="btn" onclick="saveProfile()">Save changes</button>
+      <p class="hint">${nameNote}</p>
+
+      ${perms? `
+      <div class="section-title">What I can do — ${u.department} department</div>
+      ${Object.entries(perms).map(([k,v])=>`<div class="perm-row"><span>${k}</span><span class="${v?'perm-yes':'perm-no'}">${v?'YES':'NO'}</span></div>`).join('')}` : ''}
+
+      ${isSelf? `
+      <div class="section-title">This session</div>
+      <div class="tag-line">Device: ${navigator.userAgent}</div>
+      <div class="tag-line">Signed in: ${u.lastLoginDate?fmtDateTime(u.lastLoginDate):'just now'}</div>
+      <button class="btn small danger" style="margin-top:8px;" onclick="logout()">Log out of this session</button>` : ''}
+
+      ${editingAsAdmin? `
+      <div class="section-title">Admin controls</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn small secondary" onclick="adminResetPassword('${u.id}')">Reset password</button>
+        <button class="btn small secondary" onclick="adminResetDevice('${u.id}')">Reset device / MFA (unlock)</button>
+        <button class="btn small ${u.status==='suspended'?'':'danger'}" onclick="toggleSuspend('${u.id}')">${u.status==='suspended'?'Reactivate account':'Suspend account'}</button>
+      </div>` : ''}
+    </div>`;
+  document.getElementById('modal-bg').classList.add('open');
+}
+async function saveProfile(){
+  const u = userById(state.profileTargetId);
+  const isSelf = state.profileTargetId===state.userId;
+  const editingAsAdmin = !isSelf && isSuperAdmin();
+  const picInput = document.getElementById('p-pic');
+  if(picInput && picInput.files && picInput.files[0] && picInput.files[0].size < 300000){
+    u.profilePic = await new Promise((res)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.readAsDataURL(picInput.files[0]); });
+  }
+  if(document.getElementById('p-name') && !document.getElementById('p-name').disabled) u.name = document.getElementById('p-name').value.trim() || u.name;
+  if(document.getElementById('p-login') && !document.getElementById('p-login').disabled) u.login = document.getElementById('p-login').value.trim() || u.login;
+  if(document.getElementById('p-phone') && !document.getElementById('p-phone').disabled) u.phone = document.getElementById('p-phone').value.trim() || u.phone;
+  if(document.getElementById('p-org') && !document.getElementById('p-org').disabled) u.org = document.getElementById('p-org').value.trim() || u.org;
+  if(document.getElementById('p-cac') && !document.getElementById('p-cac').disabled) u.corporateRegNumber = document.getElementById('p-cac').value.trim();
+  if(document.getElementById('p-station') && !document.getElementById('p-station').disabled) u.stationedAt = document.getElementById('p-station').value;
+  if(document.getElementById('p-dept')) u.department = document.getElementById('p-dept').value;
+  await saveUsers(state.users);
+  if(editingAsAdmin) await pushSecurityLog(`${state.person} updated profile details for ${u.name}`);
+  toast('Profile updated.');
+  closeModal();
+  if(isSelf) renderApp();
+}
+async function adminResetPassword(uid){
+  const u = userById(uid);
+  const temp = Math.random().toString(36).slice(-8);
+  try{
+    await apiFetch('/api/auth/set-password', {method:'POST', body: JSON.stringify({email: u.login, newPassword: temp})});
+  }catch(err){ toast('Could not reset password: ' + (err.message||'server error')); return; }
+  await pushSecurityLog(`${state.person} reset the password for ${u.name}`);
+  toast(`New temporary password for ${u.name}: ${temp} (share this with them securely — demo only, no real email/SMS is sent).`);
+}
+async function adminResetDevice(uid){
+  const u = userById(uid);
+  u.forceReauth = true;
+  await saveUsers(state.users);
+  await pushSecurityLog(`${state.person} cleared sessions and reset device/MFA lock for ${u.name}`);
+  toast(`${u.name} can now sign in on a new device. (Demo note: this app has no real device binding or MFA to clear — this records the action for audit purposes.)`);
+}
+async function toggleSuspend(uid){
+  const u = userById(uid);
+  u.status = u.status==='suspended' ? 'active' : 'suspended';
+  await saveUsers(state.users);
+  await pushSecurityLog(`${state.person} ${u.status==='suspended'?'suspended':'reactivated'} ${u.name}'s account`);
+  toast(`${u.name} is now ${u.status}.`);
+  openProfile(uid);
+}
+
+/* ========================= APP SHELL ========================= */
+const NAV_ICONS = {
+  dashboard:'🏠', actions:'✅', support:'💬', referrals:'🎁',
+  fen:'📝', bol:'📘', endtoend:'🔁', finance:'💰', alerts:'⚑',
+  reports:'📊', activity:'🕒', staff:'👥', verification:'🪪', settings:'⚙️'
+};
+function buildNav(){
+  if(state.role!=='admin') return [['dashboard','My Containers'],['actions','Action List'],['support','Support'],['referrals','Refer & Earn']];
+  const nav = [['dashboard','Terminal Dashboard']];
+  if(canSeeFenBol()){ nav.push(['fen','First Entry Note']); nav.push(['bol','Book of Life']); }
+  nav.push(['endtoend','End to End']);
+  if(canSeeFinance()) nav.push(['finance','Financial Reconciliation']);
+  nav.push(['alerts','Alerts']);
+  nav.push(['reports','Performance Reports']);
+  nav.push(['support','Support']);
+  nav.push(['referrals','Refer & Earn']);
+  nav.push(['activity','Activity Log']);
+  if(isSuperAdmin()){ nav.push(['staff','Staff Directory']); nav.push(['verification','Verification Queue']); nav.push(['settings','System Settings']); }
+  return nav;
+}
+function myInboxCount(){
+  if(state.role!=='admin') return 0;
+  if(isSuperAdmin()) return state.log.filter(l=>l.dept && !l.ack.includes('Admin')).length;
+  return state.log.filter(l=>l.dept===state.department && !l.ack.includes(state.department)).length;
+}
+const MAX_TABS = 4;
+function renderApp(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app-shell').style.display='flex';
+  closeMoreSheet();
+  const nav = buildNav();
+  if(!nav.some(n=>n[0]===state.activeTab)) state.activeTab='dashboard';
+  const inboxCount = myInboxCount();
+  const primary = nav.slice(0, MAX_TABS);
+  const overflow = nav.slice(MAX_TABS);
+  const tabBar = document.getElementById('tab-bar');
+  tabBar.innerHTML = primary.map(([id,label])=>`
+    <button class="tab-btn ${state.activeTab===id?'active':''}" onclick="switchTab('${id}')">
+      <span class="tb-ic">${NAV_ICONS[id]||'•'}</span><span class="tb-lbl">${label}</span>
+      ${id==='dashboard' && inboxCount>0 ? `<span class="tb-badge">${inboxCount}</span>` : ''}
+    </button>`).join('') +
+    (nav.length>MAX_TABS ? `<button class="tab-btn ${overflow.some(n=>n[0]===state.activeTab)?'active':''}" onclick="openMoreSheet()">
+      <span class="tb-ic">⋯</span><span class="tb-lbl">More</span>
+    </button>` : '');
+  const u = userById(state.userId);
+  document.getElementById('ab-avatar-btn').innerHTML = u && u.profilePic
+    ? `<img src="${u.profilePic}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`
+    : (state.person ? state.person.split(' ').map(w=>w[0]).join('').slice(0,2) : '?');
+  const current = nav.find(n=>n[0]===state.activeTab);
+  document.getElementById('mobile-title').textContent = current ? current[1] : ROLE_META[state.role].name;
+  document.getElementById('brand-sub').textContent = state.department ? (state.department+' DEPT.') : ROLE_META[state.role].name.toUpperCase();
+  renderTab();
+}
+function openMoreSheet(){
+  const nav = buildNav();
+  const inboxCount = myInboxCount();
+  let html = `<div class="sheet-handle"></div>
+    <div class="sheet-head">${state.person} · ${ROLE_META[state.role].name}${state.department?' · '+state.department:''}</div>`;
+  html += nav.map(([id,label])=>`
+    <div class="sheet-item ${state.activeTab===id?'active-tab':''}" onclick="switchTab('${id}')">
+      <span>${NAV_ICONS[id]||'•'}</span><span>${label}</span>
+      ${id==='dashboard' && inboxCount>0 ? `<span class="sheet-badge">${inboxCount}</span>` : ''}
+    </div>`).join('');
+  html += `<hr>
+    <div class="sheet-item" onclick="closeMoreSheet(); openProfile(state.userId);"><span>👤</span><span>Edit profile</span></div>
+    <div class="sheet-item danger" onclick="logout();"><span>🚪</span><span>Sign out</span></div>`;
+  document.getElementById('more-sheet-content').innerHTML = html;
+  document.getElementById('more-sheet-bg').classList.add('open');
+}
+function closeMoreSheet(){ const el=document.getElementById('more-sheet-bg'); if(el) el.classList.remove('open'); }
+function switchTab(id){ state.activeTab=id; closeMoreSheet(); renderApp(); }
+function holdBannerHTML(){ return masterHoldActive() ? `<div class="hold-banner">⛔ MASTER HOLD ACTIVE — Admin has frozen stage advances, duty payments, invoice approvals, and seal recording terminal-wide.</div>` : ''; }
+function renderTab(){
+  const main = document.getElementById('main');
+  let html;
+  if(state.activeTab==='dashboard') html = state.role==='admin' ? adminDashboardHTML() : userDashboardHTML();
+  else if(state.activeTab==='actions') html = actionListHTML();
+  else if(state.activeTab==='fen') html = fenHTML();
+  else if(state.activeTab==='bol') html = bolHTML();
+  else if(state.activeTab==='endtoend') html = endToEndHTML();
+  else if(state.activeTab==='finance') html = financeHTML();
+  else if(state.activeTab==='alerts') html = adminAlertsHTML();
+  else if(state.activeTab==='reports') html = reportsHTML();
+  else if(state.activeTab==='support') html = supportHTML();
+  else if(state.activeTab==='referrals') html = referralsHTML();
+  else if(state.activeTab==='activity') html = activityLogHTML();
+  else if(state.activeTab==='staff') html = staffHTML();
+  else if(state.activeTab==='verification') html = verificationHTML();
+  else if(state.activeTab==='settings') html = settingsHTML();
+  main.innerHTML = (state.role==='admin' && state.activeTab==='dashboard' ? holdBannerHTML() : '') + html;
+  attachTabHandlers();
+}
+function attachTabHandlers(){ const form = document.getElementById('fen-form'); if(form) form.addEventListener('submit', submitFEN); }
+
+/* ========================= USER (IMPORTER/AGENT) DASHBOARD ========================= */
+function userDashboardHTML(){
+  const list = visibleContainers().filter(c=>!c.steppedDown.status);
+  const activeCount = list.filter(c=>c.stageIdx<14).length;
+  const alertCount = activeAlertCount(list);
+  const roleWord = state.role==='importer' ? 'shipments' : 'client jobs';
+  return `
+    <div class="topbar"><div><h1>${state.role==='importer'?'My Containers':'My Client Jobs'}</h1>
+      <div class="desc">Real-time status for every container linked to ${state.person}, from Customs Processing through to delivery.</div></div></div>
+    <div class="metric-row">
+      <div class="metric"><div class="num">${list.length}</div><div class="lbl">Total ${roleWord}</div></div>
+      <div class="metric"><div class="num">${activeCount}</div><div class="lbl">In progress</div></div>
+      <div class="metric"><div class="num">${alertCount}</div><div class="lbl">Active alerts</div></div>
+      <div class="metric"><div class="num">${list.filter(c=>c.stageIdx>=13).length}</div><div class="lbl">Delivered / returned</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h3>Containers</h3>
+        <div class="toolbar"><input type="text" id="job-search" placeholder="Search container or Bill of Lading…" oninput="filterJobRows(this.value)"></div></div>
+      <div class="panel-body" style="padding:0 18px;" id="job-list">${jobListHTML(list)}</div>
+    </div>`;
+}
+function idTagsLine(c){
+  const tags = [];
+  if(c.transferLetterNumber) tags.push(`TL: ${c.transferLetterNumber}`);
+  if(c.invoiceNumber) tags.push(`Inv: ${c.invoiceNumber}`);
+  if(c.exitNumber) tags.push(`Exit: ${c.exitNumber}`);
+  if(c.transporter && c.transporter.name) tags.push(`Transporter: ${c.transporter.name}`);
+  return tags.length ? ` · <span class="mono" style="font-size:10px;">${tags.join(' · ')}</span>` : '';
+}
+function jobListHTML(list){
+  if(list.length===0) return `<div class="empty-state"><div class="glyph">// //</div>No containers to show.</div>`;
+  const sorted = [...list].sort((a,b)=> activeAlertCount([b]) - activeAlertCount([a]) || a.stageIdx-b.stageIdx);
+  return sorted.map(c=>{
+    const alerts = c.alerts.filter(a=>a.status==='active');
+    const stage = STAGES[c.stageIdx];
+    const pillClass = c.stageIdx>=13 ? 'done' : (alerts.length? 'wait':'ok');
+    let colText;
+    if(state.role==='importer') colText = c.agent ? c.agent : 'Direct import — no agent';
+    else if(state.role==='agent') colText = c.owner ? c.owner : 'Agent-sourced — no importer';
+    else colText = ownerAgentLabel(c);
+    let statusHtml = alerts.length? `<span class="flag">${alerts[0].type}</span>` : `<span class="pill ${pillClass}">${c.stageIdx>=13?'Delivered':(c.stageIdx>=9?'At terminal':'In CPC')}</span>`;
+    if(c.sealMismatch) statusHtml = `<span class="flag">Seal mismatch</span>`;
+    if(c.steppedDown.status) statusHtml = `<span class="pill stepped">Stepped down</span>`;
+    return `<div class="job-row" data-cnum="${c.containerNumber.toLowerCase()}" data-bol="${c.billOfLading.toLowerCase()}" data-owner="${c.owner||''}" data-agent="${c.agent||''}" data-stagegroup="${stageGroup(c)}" onclick="openContainer('${c.id}')">
+      <div class="cnum">${c.containerNumber}</div>
+      <div><div>${c.item}</div><div class="bol">${c.billOfLading} · ${c.size}${!c.bolComplete?' · <span style=\'color:#6E4B0E\'>DTI assessment pending</span>':''}${idTagsLine(c)}</div></div>
+      <div class="stage-lbl">${stage.label}</div>
+      <div class="owner">${colText}</div>
+      <div>${statusHtml}</div>
+    </div>`;
+  }).join('');
+}
+function stageGroup(c){ return c.stageIdx>=13 ? 'delivered' : (c.stageIdx>=9 ? 'bilbt' : 'cpc'); }
+function filterJobRows(q){
+  q = (q||'').toLowerCase();
+  document.querySelectorAll('#job-list .job-row').forEach(r=>{
+    const match = r.dataset.cnum.includes(q) || r.dataset.bol.includes(q);
+    r.style.display = match ? 'grid' : 'none';
+  });
+}
+function applyAdminFilters(){
+  const status = document.getElementById('f-status') ? document.getElementById('f-status').value : 'all';
+  const owner = document.getElementById('f-owner-filter') ? document.getElementById('f-owner-filter').value : 'all';
+  const agent = document.getElementById('f-agent-filter') ? document.getElementById('f-agent-filter').value : 'all';
+  const q = document.getElementById('job-search') ? document.getElementById('job-search').value.toLowerCase() : '';
+  document.querySelectorAll('#job-list .job-row').forEach(r=>{
+    let show = true;
+    if(status!=='all' && r.dataset.stagegroup!==status) show=false;
+    if(owner!=='all' && r.dataset.owner!==owner) show=false;
+    if(agent!=='all' && r.dataset.agent!==agent) show=false;
+    if(q && !(r.dataset.cnum.includes(q) || r.dataset.bol.includes(q))) show=false;
+    r.style.display = show ? 'grid' : 'none';
+  });
+}
+
+/* ========================= ACTION LIST ========================= */
+function actionListHTML(){
+  const list = visibleContainers();
+  const items = [];
+  list.forEach(c=> c.alerts.filter(a=>a.status==='active').forEach(a=> items.push({c,a})));
+  return `
+    <div class="topbar"><div><h1>Action List</h1><div class="desc">Everything that needs your attention right now, most urgent first.</div></div></div>
+    <div class="panel"><div class="panel-body">
+      ${items.length===0 ? `<div class="empty-state"><div class="glyph">✓</div>Nothing needs your attention. All clear.</div>` :
+        items.map(({c,a})=>`
+        <div class="action-item">
+          <div class="txt"><span class="cn">${c.containerNumber}</span> — <b>${a.type} alert</b>
+            <div class="tag-line">${ALERT_TYPES[a.type]?ALERT_TYPES[a.type].action:''} · detected ${fmtDate(a.dateDetected)}</div></div>
+          <button class="btn small secondary" onclick="openContainer('${c.id}')">View</button>
+        </div>`).join('')}
+    </div></div>`;
+}
+
+/* ========================= FIRST ENTRY NOTE (Admin/Documentation/DTI) ========================= */
+function fenHTML(){
+  const importers = state.users.filter(u=>u.role==='importer' && u.status==='active');
+  const agents = state.users.filter(u=>u.role==='agent' && u.status==='active');
+  return `
+    <div class="topbar"><div><h1>First Entry Note</h1><div class="desc">Capture a shipment before customs processing begins. Visible to Admin, Documentation, and DTI only.</div></div></div>
+    <div class="panel"><div class="panel-body">
+      <form id="fen-form">
+        <div class="form-grid">
+          <div class="field"><label>Container number *</label><input type="text" id="f-cnum" required placeholder="e.g. MAEU1234567"></div>
+          <div class="field"><label>Bill of Lading *</label><input type="text" id="f-bol" required placeholder="e.g. BL-88700"></div>
+          <div class="field"><label>Container size *</label><select id="f-size" required><option value="20ft">20ft</option><option value="40ft">40ft</option></select></div>
+          <div class="field"><label>Item description *</label><input type="text" id="f-item" required placeholder="e.g. Consumer Electronics"></div>
+          <div class="field"><label>Destination *</label><input type="text" id="f-dest" required placeholder="e.g. Lagos Mainland Warehouse"></div>
+          <div class="field"><label>Job brought by *</label>
+            <select id="f-jobtype" onchange="onFenTypeChange()" required><option value="importer">Importer (direct)</option><option value="agent">Clearing Agent</option></select>
+            <div class="fhint">Importers and agents bring jobs independently — only one is linked per job.</div></div>
+          <div class="field" id="f-owner-field"><label>Importer *</label>
+            <select id="f-owner">${importers.map(u=>`<option value="${u.name}">${u.name} — ${u.org}</option>`).join('') || '<option value="">No importers registered yet</option>'}</select></div>
+          <div class="field" id="f-agent-field" style="display:none;"><label>Clearing Agent *</label>
+            <select id="f-agent">${agents.map(u=>`<option value="${u.name}">${u.name} — ${u.org}</option>`).join('') || '<option value="">No agents registered yet</option>'}</select></div>
+          <div class="field"><label>Processing charge (₦)</label><input type="number" id="f-processing" value="0"></div>
+        </div>
+        <button class="btn" type="submit">Save to First Entry Note</button>
+        <p class="hint">The job appears immediately at stage 1 (CPC-CAC) and can move through every stage right away. DTI adds the Book of Life numbers whenever assessment is ready — even after the container reaches BILBT. Examination (stage 11) itself is still blocked until assessment is complete.</p>
+      </form>
+    </div></div>
+    <div class="panel"><div class="panel-head"><h3>All First Entry Note records</h3></div>
+      <div class="panel-body" style="padding:0 18px;">${fenRegistryListHTML(state.containers)}</div></div>`;
+}
+function fenRegistryListHTML(list){
+  if(list.length===0) return `<div class="empty-state"><div class="glyph">// //</div>No jobs registered yet.</div>`;
+  const sorted = [...list].sort((a,b)=> new Date(b.createdAt)-new Date(a.createdAt));
+  return sorted.map(c=>`<div class="job-row" style="grid-template-columns:120px 1.4fr 1.6fr 1fr 110px;" onclick="openContainer('${c.id}')">
+      <div class="cnum">${c.containerNumber}</div>
+      <div><div>${c.item}</div><div class="bol">${c.billOfLading} · ${c.size}${idTagsLine(c)}</div></div>
+      <div class="stage-lbl">${c.destination}</div>
+      <div class="owner">${ownerAgentLabel(c)}</div>
+      <div class="tag-line">${fmtDate(c.createdAt)}</div>
+    </div>`).join('');
+}
+function onFenTypeChange(){
+  const type = document.getElementById('f-jobtype').value;
+  document.getElementById('f-owner-field').style.display = type==='importer' ? 'block' : 'none';
+  document.getElementById('f-agent-field').style.display = type==='agent' ? 'block' : 'none';
+}
+async function submitFEN(e){
+  e.preventDefault();
+  const cnum = document.getElementById('f-cnum').value.trim().toUpperCase();
+  const bol = document.getElementById('f-bol').value.trim();
+  const jobtype = document.getElementById('f-jobtype').value;
+  const owner = jobtype==='importer' ? document.getElementById('f-owner').value : null;
+  const agent = jobtype==='agent' ? document.getElementById('f-agent').value : null;
+  if(!cnum || !bol){ toast('Container number and Bill of Lading are required.'); return; }
+  if(jobtype==='importer' && !owner){ toast('Select an importer, or register one first.'); return; }
+  if(jobtype==='agent' && !agent){ toast('Select a clearing agent, or register one first.'); return; }
+  if(state.containers.some(c=>c.containerNumber===cnum)){ toast('That container number is already registered.'); return; }
+  const c = normalizeContainer({
+    id:'c'+Date.now(), containerNumber:cnum, billOfLading:bol,
+    size:document.getElementById('f-size').value,
+    item:document.getElementById('f-item').value.trim() || 'Unspecified cargo',
+    destination:document.getElementById('f-dest').value.trim() || 'Not specified',
+    owner, agent, bolComplete:false, aNumber:null, cNumber:null, stageIdx:0,
+    history:[{stage:0, t:new Date().toISOString(), user:state.person}],
+    alerts:[], documents:[],
+    financial:{processingCharge:Number(document.getElementById('f-processing').value)||0},
+    detentionStart:null, steppedDown:{status:false,comment:'',by:null,date:null}, createdAt:new Date().toISOString()
+  });
+  state.containers.push(c);
+  await saveContainers(state.containers);
+  await pushLog(`New job registered: ${cnum} (FEN) by ${state.person}. DTI draft assessment required.`, 'DTI');
+  toast(`${cnum} registered in First Entry Note.`);
+  renderTab();
+}
+
+/* ========================= BOOK OF LIFE ========================= */
+function bolHTML(){
+  const list = state.containers;
+  const pending = list.filter(c=>!c.bolComplete);
+  const complete = list.filter(c=>c.bolComplete);
+  return `
+    <div class="topbar"><div><h1>Book of Life</h1><div class="desc">Every job's identification numbers and DTI assessment status in one place — transfer letter, invoice/charge number, A-Number, C-Number, and exit number — including containers that have been stepped down. Visible to Admin, Documentation, and DTI only.</div></div></div>
+    <div class="metric-row">
+      <div class="metric"><div class="num">${list.length}</div><div class="lbl">Total jobs</div></div>
+      <div class="metric"><div class="num">${complete.length}</div><div class="lbl">Assessment complete</div></div>
+      <div class="metric"><div class="num">${pending.length}</div><div class="lbl">Awaiting DTI assessment</div></div>
+      <div class="metric"><div class="num">${list.filter(c=>c.steppedDown.status).length}</div><div class="lbl">Stepped down</div></div>
+    </div>
+    <div class="panel"><div class="panel-head"><h3>Reference numbers — every job's identification numbers</h3></div>
+      <div class="panel-body" style="padding:0 18px;">${bolReferenceNumbersListHTML(list)}</div></div>
+    <div class="panel"><div class="panel-head"><h3>Awaiting DTI assessment</h3></div>
+      <div class="panel-body" style="padding:0 18px;">${bolPendingListHTML(pending)}</div></div>
+    <div class="panel"><div class="panel-head"><h3>Assessment complete</h3></div>
+      <div class="panel-body" style="padding:0 18px;">${bolCompleteListHTML(complete)}</div></div>`;
+}
+function bolReferenceNumbersListHTML(list){
+  if(list.length===0) return `<div class="empty-state"><div class="glyph">// //</div>No jobs recorded yet.</div>`;
+  return list.map(c=>`<div class="job-row" style="grid-template-columns:120px 1fr 1fr 1fr 100px;" onclick="openContainer('${c.id}')">
+    <div class="cnum">${c.containerNumber}${c.steppedDown.status?' <span class="pill stepped" style="margin-left:4px;">Stepped down</span>':''}</div>
+    <div class="tag-line">Transfer letter<br><span class="mono">${c.transferLetterNumber||'—'}</span></div>
+    <div class="tag-line">Invoice / charge<br><span class="mono">${c.invoiceNumber||'—'}</span></div>
+    <div class="tag-line">A: <span class="mono">${c.aNumber||'—'}</span> · C: <span class="mono">${c.cNumber||'—'}</span></div>
+    <div class="tag-line">Exit<br><span class="mono">${c.exitNumber||'—'}</span></div>
+  </div>`).join('');
+}
+function bolPendingListHTML(list){
+  if(list.length===0) return '<div class="empty-state" style="padding:20px;">Every job has a Book of Life record.</div>';
+  return list.map(c=>`<div class="job-row" onclick="openContainer('${c.id}')">
+    <div class="cnum">${c.containerNumber}</div>
+    <div><div>${c.item}</div><div class="bol">${c.billOfLading} · ${c.size}</div></div>
+    <div class="stage-lbl">${c.transferLetterNumber?`Transfer letter: <span class="mono">${c.transferLetterNumber}</span>`:'Transfer letter not yet issued'}</div>
+    <div class="owner">${ownerAgentLabel(c)}</div>
+    <div>${c.steppedDown.status?'<span class="pill stepped">Stepped down</span>':'<span class="pill wait">Awaiting</span>'}</div>
+  </div>`).join('');
+}
+function bolCompleteListHTML(list){
+  if(list.length===0) return '<div class="empty-state" style="padding:20px;">None yet.</div>';
+  return list.map(c=>`<div class="job-row" onclick="openContainer('${c.id}')">
+    <div class="cnum">${c.containerNumber}</div>
+    <div><div>${c.item}</div><div class="bol">${c.billOfLading} · ${c.size}</div></div>
+    <div class="stage-lbl mono">C: ${c.cNumber} ${c.transferLetterNumber?`&nbsp; TL: ${c.transferLetterNumber}`:''} ${c.invoiceNumber?`&nbsp; Inv: ${c.invoiceNumber}`:''}</div>
+    <div class="owner">${ownerAgentLabel(c)}</div>
+    <div>${c.steppedDown.status?'<span class="pill stepped">Stepped down</span>':'<span class="pill ok">Complete</span>'}</div>
+  </div>`).join('');
+}
+
+/* ========================= END TO END ========================= */
+function endToEndHTML(){
+  const list = state.containers;
+  const owners = uniqueNames(list,'owner'); const agents = uniqueNames(list,'agent');
+  return `
+    <div class="topbar"><div><h1>End to End</h1><div class="desc">Every job ever recorded in the Book of Life, including containers stepped down before terminal clearance. Any department can update stage (within their access) or step a container down here.</div></div></div>
+    <div class="metric-row">
+      <div class="metric"><div class="num">${list.length}</div><div class="lbl">Total jobs, all time</div></div>
+      <div class="metric"><div class="num">${list.filter(c=>!c.steppedDown.status && c.stageIdx<14).length}</div><div class="lbl">Active in pipeline</div></div>
+      <div class="metric"><div class="num">${list.filter(c=>c.stageIdx>=13 && !c.steppedDown.status).length}</div><div class="lbl">Delivered / returned</div></div>
+      <div class="metric"><div class="num">${list.filter(c=>c.steppedDown.status).length}</div><div class="lbl">Stepped down</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h3>All jobs</h3>
+        <div class="toolbar">
+          <select id="f-status" onchange="applyAdminFilters()"><option value="all">All statuses</option><option value="cpc">In CPC</option><option value="bilbt">At BILBT</option><option value="delivered">Delivered</option><option value="stepped">Stepped down</option></select>
+          <select id="f-owner-filter" onchange="applyAdminFilters()"><option value="all">All owners</option>${owners.map(o=>`<option>${o}</option>`).join('')}</select>
+          <select id="f-agent-filter" onchange="applyAdminFilters()"><option value="all">All agents</option>${agents.map(a=>`<option>${a}</option>`).join('')}</select>
+          <input type="text" id="job-search" placeholder="Search container, BOL…" oninput="applyAdminFilters()">
+        </div>
+      </div>
+      <div class="panel-body" style="padding:0 18px;" id="job-list">${e2eListHTML(list)}</div>
+    </div>`;
+}
+function e2eListHTML(list){
+  return list.map(c=>{
+    const alerts = c.alerts.filter(a=>a.status==='active');
+    const stage = STAGES[c.stageIdx];
+    let statusHtml = c.steppedDown.status ? '<span class="pill stepped">Stepped down</span>' :
+      (alerts.length? `<span class="flag">${alerts[0].type}</span>` : `<span class="pill ${c.stageIdx>=13?'done':'ok'}">${c.stageIdx>=13?'Delivered':(c.stageIdx>=9?'At terminal':'In CPC')}</span>`);
+    const grp = c.steppedDown.status ? 'stepped' : stageGroup(c);
+    return `<div class="job-row" data-cnum="${c.containerNumber.toLowerCase()}" data-bol="${c.billOfLading.toLowerCase()}" data-owner="${c.owner||''}" data-agent="${c.agent||''}" data-stagegroup="${grp}" onclick="openContainer('${c.id}')">
+      <div class="cnum">${c.containerNumber}</div>
+      <div><div>${c.item}</div><div class="bol">${c.billOfLading} · ${c.size}${idTagsLine(c)}</div></div>
+      <div class="stage-lbl">${stage.label}</div>
+      <div class="owner">${ownerAgentLabel(c)}</div>
+      <div>${statusHtml}</div>
+    </div>`;
+  }).join('') || `<div class="empty-state"><div class="glyph">// //</div>No jobs recorded yet.</div>`;
+}
+
+/* ========================= FINANCIAL RECONCILIATION ========================= */
+function financeHTML(){
+  const list = state.containers;
+  const totalDuties = list.reduce((s,c)=>s+c.financial.customsDuties,0);
+  const paidDuties = list.filter(c=>c.financial.dutyStatus==='paid').reduce((s,c)=>s+c.financial.customsDuties,0);
+  const pendingDuties = totalDuties - paidDuties;
+  const totalBilbt = list.reduce((s,c)=>s+c.financial.bilbtCharges,0);
+  const totalClearing = list.reduce((s,c)=>s+c.financial.clearingExpenses,0);
+  return `
+    <div class="topbar"><div><h1>Financial Reconciliation</h1><div class="desc">Review and edit every expense line, invoices, and duty payments. Visible to Admin and Accountant only.</div></div></div>
+    <div class="metric-row">
+      <div class="metric"><div class="num">${fmtNaira(paidDuties)}</div><div class="lbl">Duties collected</div></div>
+      <div class="metric"><div class="num">${fmtNaira(pendingDuties)}</div><div class="lbl">Duties outstanding</div></div>
+      <div class="metric"><div class="num">${fmtNaira(totalBilbt)}</div><div class="lbl">Total BILBT charges</div></div>
+      <div class="metric"><div class="num">${fmtNaira(totalClearing)}</div><div class="lbl">Total clearing expenses</div></div>
+    </div>
+    <div class="panel"><div class="panel-head"><h3>All jobs — tap a row to edit charges, invoices, or duty payment</h3></div>
+      <div class="panel-body" style="padding:0 18px;">
+        ${list.map(c=>`
+        <div class="job-row" style="grid-template-columns:120px 1fr 1fr 1.2fr 100px;" onclick="openContainer('${c.id}')">
+          <div class="cnum">${c.containerNumber}</div>
+          <div class="tag-line">BILBT: ${fmtNaira(c.financial.bilbtCharges)}<br>Transport: ${fmtNaira(c.financial.transportation)}</div>
+          <div class="tag-line">Duty: ${fmtNaira(c.financial.customsDuties)}<br>Invoices: ${c.invoices.length}</div>
+          <div class="owner">${ownerAgentLabel(c)}</div>
+          <div><span class="pill ${c.financial.dutyStatus==='paid'?'ok':'wait'}">${c.financial.dutyStatus}</span></div>
+        </div>`).join('')}
+      </div></div>`;
+}
+
+/* ========================= CONTAINER DETAIL MODAL ========================= */
+function stageRailHTML(idx, plainLabels){
+  return `<div class="rail-wrap"><div class="rail">${STAGES.map((s,i)=>{
+    const cls = i<idx? 'complete' : (i===idx?'current':'');
+    return `<div class="rail-step ${cls}"><div class="rail-dot"></div><div class="rail-code">${s.code}</div>
+      ${plainLabels?`<div class="rail-name">${s.label.split('—')[0].trim()}</div>`:''}</div>`;
+  }).join('')}</div></div>`;
+}
+function financialTotalOf(c, extra){
+  extra = extra||0;
+  const other = (c.financial.otherExpenses||[]).reduce((s,o)=>s+(Number(o.amount)||0),0);
+  return c.financial.processingCharge + c.financial.mptRating + c.financial.shippingRating + c.financial.bilbtCharges + c.financial.clearingExpenses +
+    c.financial.transportation + c.financial.manifestExpenses + c.financial.paarExpenses + c.financial.customsDuties + c.financial.sonRemitaAmount + other + extra;
+}
+function openContainer(id){
+  const c = byId(id);
+  const isAdmin = state.role==='admin';
+  const isOwnerOrAgent = c.owner===state.person || c.agent===state.person;
+  const stage = STAGES[c.stageIdx];
+  const activeAlerts = c.alerts.filter(a=>a.status==='active');
+  const FREE_DAYS = state.settings.freeDays;
+  const RATE = state.settings.dailyPenaltyRate;
+  const detentionDays = c.detentionStart ? daysBetween(c.detentionStart) : null;
+  const detentionCost = detentionDays!==null && detentionDays>FREE_DAYS ? (detentionDays-FREE_DAYS)*RATE : 0;
+  const financialTotal = financialTotalOf(c, detentionCost);
+  const myAllowedStages = allowedStagesFor(state.department);
+  const canTouchStage = isAdmin && (isSuperAdmin() || myAllowedStages.length>0);
+
+  const html = `
+    <div class="modal-head">
+      <div>
+        <div class="tag-line mono" style="margin-bottom:4px;">${c.billOfLading} · ${c.size} · ${c.item}</div>
+        <h2 class="mono" style="font-size:22px;">${c.containerNumber}</h2>
+        <div class="tag-line">${ownerAgentLabel(c)} &nbsp;·&nbsp; Destination: ${c.destination}</div>
+      </div>
+      <button class="btn ghost" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="section-title" style="margin-top:0;">Identification & reference numbers</div>
+      <div class="panel" style="box-shadow:none;">
+        <div class="panel-body">
+          ${canEditTransferLetter()?`
+          <div class="field" style="margin-bottom:10px;"><label>BILBT transfer letter number</label><input type="text" id="transfer-letter" value="${c.transferLetterNumber||''}" placeholder="e.g. BBT/TR/24/OMT/003"><button class="btn small secondary" style="margin-top:6px;" onclick="saveTransferLetter('${c.id}')">Save transfer letter number</button></div>`
+          : `<div class="kv"><b>Transfer letter</b><span class="mono">${c.transferLetterNumber||'— not yet issued —'}</span></div>`}
+          ${canEditInvoiceNumber()?`
+          <div class="field" style="margin-bottom:10px;"><label>Invoice / charge number</label><input type="text" id="id-invoice-number" value="${c.invoiceNumber||''}" placeholder="e.g. 18/OMT/1170 or 25/WACT/1220"><div class="fhint">Belburge's unique reference covering the processing charge and all expenses on this job.</div><button class="btn small secondary" style="margin-top:6px;" onclick="saveInvoiceNumber('${c.id}')">Save invoice / charge number</button></div>`
+          : `<div class="kv"><b>Invoice / charge number</b><span class="mono">${c.invoiceNumber||'— not yet issued —'}</span></div>`}
+          <div class="kv"><b>A-Number</b><span class="mono">${c.aNumber||'—'}</span></div>
+          <div class="kv"><b>C-Number</b><span class="mono">${c.cNumber||'—'}</span></div>
+          ${canEditExitNumber()?`
+          <div class="field" style="margin:10px 0 0;"><label>Exit number</label><input type="text" id="id-exit-number" value="${c.exitNumber||''}" placeholder="e.g. EX-004521">
+          <div class="fhint">${c.stageIdx>=11?'Container has cleared examination — record the exit number.':'Recorded once the job clears examination and customs release.'}</div>
+          <button class="btn small secondary" style="margin-top:6px;" onclick="saveExitNumber('${c.id}')">Save exit number</button></div>`
+          : `<div class="kv"><b>Exit number</b><span class="mono">${c.exitNumber||'—'}</span></div>`}
+        </div>
+      </div>
+
+      <div class="section-title">Transporter / driver — recorded at Book of Life</div>
+      <div class="panel" style="box-shadow:none;">
+        <div class="panel-body">
+          ${c.transporter ? `
+          <div class="kv"><b>Current transporter</b><span>${c.transporter.name}</span></div>
+          <div class="kv"><b>Phone</b><span class="mono">${c.transporter.phone||'—'}</span></div>
+          <div class="kv"><b>Vehicle number</b><span class="mono">${c.transporter.vehicleNumber||'—'}</span></div>
+          <div class="kv"><b>Driver ID / license</b><span class="mono">${c.transporter.driverIdNumber||'—'}</span></div>
+          <div class="tag-line" style="margin-top:4px;">Recorded by ${c.transporter.by} on ${fmtDate(c.transporter.date)}</div>
+          ` : `<div class="tag-line">No transporter/driver recorded yet.</div>`}
+          ${(c.transportHistory||[]).length ? `
+          <div class="section-title" style="font-size:12px;margin-top:14px;">Handover history</div>
+          ${c.transportHistory.slice().reverse().map(h=>`
+            <div class="history-row"><div class="dot"></div><div><div class="t">${fmtDateTime(h.handoverDate)}</div>
+            Handed over from <b>${h.name}</b>${h.phone?` (${h.phone})`:''}${h.vehicleNumber?` · ${h.vehicleNumber}`:''}
+            <div class="tag-line">Recorded by ${h.by}</div></div></div>`).join('')}
+          ` : ''}
+          ${canEditTransporter() ? `
+          <div class="form-grid" style="margin-top:12px;">
+            <div class="field" style="margin-bottom:6px;"><label>Transporter / driver name</label><input type="text" id="transporter-name" value="${c.transporter?c.transporter.name:''}" placeholder="Full name"></div>
+            <div class="field" style="margin-bottom:6px;"><label>Phone</label><input type="tel" id="transporter-phone" value="${c.transporter?(c.transporter.phone||''):''}" placeholder="080..."></div>
+            <div class="field" style="margin-bottom:6px;"><label>Vehicle number</label><input type="text" id="transporter-vehicle" value="${c.transporter?(c.transporter.vehicleNumber||''):''}" placeholder="e.g. LND-412-XY"></div>
+            <div class="field" style="margin-bottom:6px;"><label>Driver ID / license number</label><input type="text" id="transporter-id" value="${c.transporter?(c.transporter.driverIdNumber||''):''}" placeholder="Driver's license no."></div>
+          </div>
+          <div class="fhint" style="margin-bottom:6px;">${c.transporter?'Saving with a different name or phone records this as a handover and keeps the previous transporter in the history above.':'First assignment of a transporter/driver to this job.'}</div>
+          <button class="btn small secondary" onclick="saveTransporter('${c.id}')">Save transporter / driver</button>
+          ` : ''}
+        </div>
+      </div>
+
+      ${c.sealMismatch ? `<div class="alert-card"><h4>⚑ Seal Mismatch — possible tampering</h4><p>Recorded at examination: <b class="mono">${c.sealNumber}</b> · Confirmed at delivery: <b class="mono">${c.sealNumberDelivery}</b>. These do not match.</p></div>` : ''}
+      ${c.steppedDown.status ? `
+      <div class="stepdown-card">
+        <h4>⛔ Stepped down from active clearance</h4>
+        <p style="font-size:12.5px;margin-bottom:6px;">${c.steppedDown.comment}</p>
+        <div class="tag-line">Recorded by ${c.steppedDown.by} on ${fmtDate(c.steppedDown.date)}</div>
+        ${isAdmin?`<button class="btn small secondary" style="margin-top:8px;" onclick="reactivateContainer('${c.id}')">Reactivate container</button>`:''}
+      </div>` : ''}
+
+      ${!c.bolComplete && isAdmin ? `
+      <div class="bol-card">
+        <h4>Book of Life — DTI assessment pending</h4>
+        <p style="font-size:12.5px;margin-bottom:8px;">DTI has not yet provided the A-Number and C-Number. The job keeps moving through CPC as normal — but examination (stage 11) cannot begin until assessment is complete.</p>
+        <div class="form-grid">
+          <div class="field" style="margin-bottom:6px;"><label>A-Number</label><input type="text" id="bol-a" placeholder="A-220000"></div>
+          <div class="field" style="margin-bottom:6px;"><label>C-Number</label><input type="text" id="bol-c" placeholder="C-990000"></div>
+        </div>
+        <button class="btn small" onclick="completeBol('${c.id}')">Save Book of Life numbers</button>
+      </div>` : (!c.bolComplete ? `<div class="bol-card"><h4>Book of Life — DTI assessment pending</h4><p style="font-size:12.5px;">DTI has not yet issued the A-Number and C-Number. Examination cannot begin until this is complete.</p></div>` : '')}
+
+      ${activeAlerts.map(a=>`
+        <div class="alert-card"><h4>⚑ ${a.type} Alert — Action required</h4><p>${a.desc}</p>
+          <p style="font-weight:600;">${ALERT_TYPES[a.type]?ALERT_TYPES[a.type].action:''}</p>
+          ${isAdmin?`<button class="btn small" onclick="resolveAlert('${c.id}','${a.id}')">Mark resolved</button>`:''}
+        </div>`).join('')}
+
+      <div class="section-title">Journey — Stage ${c.stageIdx+1} of 15 <span class="dept-chip" style="margin-left:8px;">${STAGE_DEPT[c.stageIdx]}</span></div>
+      ${stageRailHTML(c.stageIdx, state.role!=='admin')}
+      <div class="stamp-badge" style="margin-top:8px;">${stage.code} · ${stage.label}</div>
+      ${detentionDays!==null?`<div class="hint" style="margin-top:10px;">Free storage window: ${FREE_DAYS} days. Container released ${detentionDays} day(s) ago. ${detentionCost>0?`Projected detention so far: <b>${fmtNaira(detentionCost)}</b>.`:'Still within free period.'}</div>`:''}
+
+      ${canTouchStage ? `
+      <div class="section-title">Advance status</div>
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <select id="stage-select">
+          ${STAGES.map((s,i)=>`<option value="${i}" ${i===c.stageIdx?'selected':''}>${i+1}. ${s.code} — ${s.label}</option>`).join('')}
+        </select>
+        <button class="btn small" onclick="updateStage('${c.id}')">Update</button>
+        ${!c.steppedDown.status?`<button class="btn small danger" onclick="showStepDownForm('${c.id}')">Step down container</button>`:''}
+      </div>
+      ${isSuperAdmin()?`
+      <div class="toggle-row"><input type="checkbox" id="force-advance"> <label for="force-advance" style="text-transform:none;letter-spacing:0;color:var(--ink-soft);">Force-advance (override sequence and assessment checks)</label></div>
+      <div id="force-reason-area"></div>`:''}
+      <div id="stepdown-form-area"></div>
+      ${!isSuperAdmin() && myAllowedStages.length>0 ? `<div class="hint">${state.department} can advance to: ${myAllowedStages.map(i=>STAGES[i].code).join(', ')}.</div>`:''}
+      ${!c.bolComplete?'<div class="hint">Book of Life numbers are still pending from DTI — CPC stages can continue, but examination is blocked until assessment is complete.</div>':''}
+      ` : (!canTouchStage && isAdmin ? `<div class="hint">Your department (${state.department}) is not authorized to advance container stages.</div>` : '')}
+
+      <div class="section-title">Seal number ${c.stageIdx>=10?'':'(recorded after examination)'}</div>
+      ${c.stageIdx>=10 && !c.sealNumber && canTouchStage ? `
+        <div class="form-grid"><div class="field" style="margin-bottom:6px;"><label>Seal number recorded at examination</label><input type="text" id="seal-exam" placeholder="SL-000000"></div></div>
+        <button class="btn small secondary" onclick="recordSealExam('${c.id}')">Save seal number</button>` :
+        (c.sealNumber ? `<div class="tag-line mono">Recorded at examination: ${c.sealNumber}</div>` : `<div class="tag-line">Not yet recorded — happens after examination.</div>`)}
+      ${c.stageIdx>=13 && c.sealNumber && !c.sealNumberDelivery && canTouchStage ? `
+        <div class="form-grid" style="margin-top:8px;"><div class="field" style="margin-bottom:6px;"><label>Confirm seal number at delivery</label><input type="text" id="seal-delivery" placeholder="SL-000000"></div></div>
+        <button class="btn small secondary" onclick="recordSealDelivery('${c.id}')">Confirm seal at delivery</button>` :
+        (c.sealNumberDelivery ? `<div class="tag-line mono">Confirmed at delivery: ${c.sealNumberDelivery} ${c.sealMismatch?' — MISMATCH':' — matches'}</div>` : '')}
+
+      <div class="section-title">Delivery location</div>
+      ${(isOwnerOrAgent || isAdmin) && c.stageIdx<14 ? `
+        <div class="field" style="margin-bottom:6px;"><input type="text" id="delivery-loc" value="${c.deliveryLocation||''}" placeholder="Full delivery address"></div>
+        <button class="btn small secondary" onclick="saveDeliveryLocation('${c.id}')">Save delivery location</button>` :
+        `<div class="tag-line">${c.deliveryLocation || 'Not yet provided.'}</div>`}
+
+      ${isAdmin? `
+      <div class="section-title" style="margin-top:16px;">Container placement — the yard is open ground; containers are either dropped or stacked</div>
+      <div class="kv"><b>Admin instruction</b><span>${c.placementInstruction ? (c.placementInstruction==='ground'?'Drop on the ground':'Stack it') : 'Not yet assigned'}${c.placementInstructionBy?` — set by ${c.placementInstructionBy} on ${fmtDate(c.placementInstructionDate)}`:''}</span></div>
+      ${isSuperAdmin()?`
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
+        <select id="placement-instruction">
+          <option value="" ${!c.placementInstruction?'selected':''}>— No instruction —</option>
+          <option value="ground" ${c.placementInstruction==='ground'?'selected':''}>Drop on the ground</option>
+          <option value="stacked" ${c.placementInstruction==='stacked'?'selected':''}>Stack it</option>
+        </select>
+        <button class="btn small secondary" onclick="savePlacementInstruction('${c.id}')">Save instruction</button>
+      </div>`:''}
+      <div class="kv"><b>Actual placement</b><span>${c.placementActual || 'Not yet recorded'}${c.placementBy?` — recorded by ${c.placementBy} on ${fmtDate(c.placementDate)}`:''}</span></div>
+      ${(isSuperAdmin() || state.department==='Operations')?`
+      <div class="hint" style="margin-bottom:6px;">Operations can record how the container was actually kept at any time, whether or not Admin assigned an instruction.</div>
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <select id="placement-method" onchange="document.getElementById('placement-target-wrap').style.display=this.value==='stacked'?'inline-block':'none'">
+          <option value="ground">Dropped on the ground</option>
+          <option value="stacked">Stacked with another container</option>
+        </select>
+        <span id="placement-target-wrap" style="display:none;">
+          <select id="placement-target">${state.containers.filter(x=>x.id!==c.id).map(x=>`<option value="${x.containerNumber}">${x.containerNumber} — ${x.item}</option>`).join('')}</select>
+        </span>
+        <button class="btn small secondary" onclick="saveContainerPlacement('${c.id}')">Save placement</button>
+      </div>`:''}` : ''}
+
+      <div class="section-title">Progress notes</div>
+      ${(c.progressNotes||[]).slice().reverse().map(n=>`
+        <div class="history-row"><div class="dot"></div><div><div class="t">${fmtDateTime(n.date)}</div>${n.text}<div class="tag-line">— ${n.by}</div></div></div>`).join('') || '<div class="tag-line">No delay notes recorded.</div>'}
+      ${isAdmin?`
+        <textarea id="progress-note" rows="2" placeholder="Explain a delay — e.g. transfer letter still with CPC, transire awaiting signature…" style="margin:8px 0;"></textarea>
+        <button class="btn small secondary" onclick="addProgressNote('${c.id}')">Add comment</button>`:''}
+
+      <div class="detail-grid" style="margin-top:22px;">
+        <div>
+          <div class="section-title">Status history</div>
+          ${c.history.slice().reverse().map(h=>`
+            <div class="history-row"><div class="dot"></div><div><div class="t">${fmtDateTime(h.t)}</div>${STAGES[h.stage].code} — ${STAGES[h.stage].label}<div class="tag-line">Updated by ${h.user}</div></div></div>`).join('')}
+
+          <div class="section-title">Documents</div>
+          ${c.documents.map(d=>`<div class="doc-row"><span>📄 ${d.name} <span class="tag-line" style="margin-left:4px;">${d.type}</span></span><span class="tag-line">${fmtDate(d.date)}${d.sizeKB?` · ${d.sizeKB} KB`:''} · ${d.uploadedBy}</span></div>`).join('') || '<div class="tag-line">No documents uploaded yet.</div>'}
+          ${isAdmin? `
+            <div style="margin-top:12px;">
+              <div class="field" style="margin-bottom:8px;"><label>Choose file</label><input type="file" id="doc-file"></div>
+              <select id="doc-type" style="margin-bottom:8px;">${DOC_TYPES.map(t=>`<option>${t}</option>`).join('')}</select>
+              <button class="btn small secondary" onclick="attachDoc('${c.id}')">Upload document</button>
+              <div class="hint">Pick a file from your device the normal way. This demo keeps the filename, type, and size on record; it does not retain the file content after refresh.</div>
+            </div>`:''}
+
+          <div class="section-title">Invoices</div>
+          ${c.invoices.length? c.invoices.map(inv=>`
+            <div class="doc-row">
+              <span>🧾 ${inv.fileName} — ${fmtNaira(inv.amount)}
+                <span class="pill ${inv.status==='approved'?'ok':(inv.status==='rejected'?'stepped':'wait')}" style="margin-left:6px;">${inv.status}</span>
+                <span class="pill ${inv.paymentStatus==='paid'?'ok':'wait'}" style="margin-left:4px;">${inv.paymentStatus}</span>
+              </span>
+              <span style="display:flex;gap:6px;align-items:center;">
+                ${inv.dataUrl?`<a href="${inv.dataUrl}" download="${inv.fileName}" class="btn small secondary">Download</a>`:'<span class="tag-line">No file preview</span>'}
+                ${isSuperAdmin() && inv.status==='pending'?`<button class="btn small" onclick="reviewInvoice('${c.id}','${inv.id}','approved')">Approve</button><button class="btn small danger" onclick="reviewInvoice('${c.id}','${inv.id}','rejected')">Reject</button>`:''}
+                ${canSeeFinance() && inv.status==='approved'?`<button class="btn small secondary" onclick="toggleInvoicePaid('${c.id}','${inv.id}')">${inv.paymentStatus==='paid'?'Mark unpaid':'Mark paid'}</button>`:''}
+              </span>
+            </div>`).join('') : '<div class="tag-line">No invoices uploaded yet.</div>'}
+          ${canSeeFinance()? `
+            <div style="margin-top:12px;">
+              <div class="field" style="margin-bottom:8px;"><label>Invoice file</label><input type="file" id="invoice-file"></div>
+              <div class="field" style="margin-bottom:8px;"><label>Amount (₦)</label><input type="number" id="invoice-amount" placeholder="0"></div>
+              <button class="btn small secondary" onclick="uploadInvoice('${c.id}')">Upload invoice</button>
+            </div>`:''}
+        </div>
+        <div>
+          <div class="section-title">Financial breakdown</div>
+          ${isAdmin ? financeEditRowsHTML(c) : financeReadRowsHTML(c)}
+          <div class="fin-row"><span>Total${detentionCost>0?' (incl. detention)':''}</span><span>${fmtNaira(financialTotal)}</span></div>
+
+          ${isAdmin? `
+          <div class="section-title">Duty payment</div>
+          ${c.financial.dutyStatus==='paid' ? `
+            <div class="tag-line">Paid on ${fmtDate(c.financial.dutyPaymentDate)} · Ref: <span class="mono">${c.financial.dutyPaymentRef}</span></div>` : `
+            <div class="form-grid">
+              <div class="field" style="margin-bottom:6px;"><label>Duty amount (₦)</label><input type="number" id="duty-amount" value="${c.financial.customsDuties||0}"></div>
+              <div class="field" style="margin-bottom:6px;"><label>Payment reference</label><input type="text" id="duty-ref" placeholder="RCPT-00000"></div>
+            </div>
+            <button class="btn small" onclick="recordDutyPayment('${c.id}')">Record duty payment</button>`}
+
+          <div class="section-title">Raise alert</div>
+          <select id="alert-type" style="margin-bottom:8px;">${Object.keys(ALERT_TYPES).map(t=>`<option>${t}</option>`).join('')}</select>
+          <textarea id="alert-desc" rows="2" placeholder="Describe the issue…" style="margin-bottom:8px;"></textarea>
+          <button class="btn small danger" onclick="raiseAlert('${c.id}')">Flag container</button>` : ''}
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('modal-content').innerHTML = html;
+  document.getElementById('modal-bg').classList.add('open');
+  state.openContainerId = id;
+  const forceCb = document.getElementById('force-advance');
+  if(forceCb) forceCb.addEventListener('change', ()=>{
+    document.getElementById('force-reason-area').innerHTML = forceCb.checked ? `<textarea id="force-reason" rows="2" placeholder="Justification for overriding the normal sequence…" style="margin:6px 0;"></textarea>` : '';
+  });
+}
+function financeReadRowsHTML(c){
+  const rows = [['Processing charge',c.financial.processingCharge],['MPT RATING',c.financial.mptRating],['Shipping line RATING',c.financial.shippingRating],['BILBT terminal charges',c.financial.bilbtCharges],
+    ['Clearing expenses',c.financial.clearingExpenses],['Transportation',c.financial.transportation],['Manifest expenses',c.financial.manifestExpenses],
+    ['PAAR expenses',c.financial.paarExpenses],['SON Remita amount',c.financial.sonRemitaAmount],[`Customs duties (${c.financial.dutyStatus})`,c.financial.customsDuties]];
+  (c.financial.otherExpenses||[]).forEach(o=>rows.push([o.label, o.amount]));
+  return (c.financial.sonRemitaRef?`<div class="kv"><b>SON Remita ref</b><span class="mono">${c.financial.sonRemitaRef}</span></div>`:'') +
+    rows.map(([l,v])=>`<div class="fin-row"><span>${l}</span><span>${fmtNaira(v)}</span></div>`).join('');
+}
+function financeEditRowsHTML(c){
+  const base = [['processingCharge','Processing charge'],['mptRating','MPT RATING'],['shippingRating','Shipping line RATING'],['bilbtCharges','BILBT terminal charges'],
+    ['clearingExpenses','Clearing expenses'],['transportation','Transportation'],['manifestExpenses','Manifest expenses'],['paarExpenses','PAAR expenses'],['sonRemitaAmount','SON Remita amount']];
+  return `
+    ${base.map(([k,l])=>`<div class="fin-edit-row"><label>${l}</label><input type="number" id="fin-${k}" value="${c.financial[k]}"></div>`).join('')}
+    <div class="field" style="margin:8px 0;"><label>SON Remita reference</label><input type="text" id="fin-sonRemitaRef" value="${c.financial.sonRemitaRef||''}" placeholder="RRR-00000000"></div>
+    <div id="other-expenses-list">${(c.financial.otherExpenses||[]).map((o,i)=>`
+      <div class="fin-edit-row"><input type="text" id="other-label-${i}" value="${o.label}" placeholder="Description"><input type="number" id="other-amt-${i}" value="${o.amount}"></div>`).join('')}</div>
+    <button type="button" class="btn small ghost" style="padding-left:0;" onclick="addOtherExpenseRow('${c.id}')">+ Add other expense</button>
+    <div class="fin-row" style="border:none;"><span>Customs duties (${c.financial.dutyStatus})</span><span>${fmtNaira(c.financial.customsDuties)}</span></div>
+    <button class="btn small secondary" style="margin-top:8px;" onclick="saveFinancials('${c.id}')">Save financial breakdown</button>`;
+}
+function addOtherExpenseRow(id){
+  const c = byId(id);
+  c.financial.otherExpenses = c.financial.otherExpenses || [];
+  c.financial.otherExpenses.push({label:'Other', amount:0});
+  openContainer(id);
+}
+async function saveFinancials(id){
+  const c = byId(id);
+  ['processingCharge','mptRating','shippingRating','bilbtCharges','clearingExpenses','transportation','manifestExpenses','paarExpenses','sonRemitaAmount'].forEach(k=>{
+    const el = document.getElementById('fin-'+k);
+    if(el) c.financial[k] = Number(el.value)||0;
+  });
+  const sonRefEl = document.getElementById('fin-sonRemitaRef');
+  if(sonRefEl) c.financial.sonRemitaRef = sonRefEl.value.trim() || null;
+  const others = [];
+  (c.financial.otherExpenses||[]).forEach((o,i)=>{
+    const lbl = document.getElementById('other-label-'+i), amt = document.getElementById('other-amt-'+i);
+    if(lbl) others.push({label: lbl.value.trim()||'Other', amount: Number(amt.value)||0});
+  });
+  c.financial.otherExpenses = others;
+  await saveContainers(state.containers);
+  await pushLog(`Financial breakdown updated for ${c.containerNumber} by ${state.person}`);
+  toast('Financial breakdown saved.');
+  openContainer(id);
+}
+function closeModal(){ document.getElementById('modal-bg').classList.remove('open'); state.openContainerId = null; }
+
+async function saveDeliveryLocation(id){
+  const c = byId(id);
+  c.deliveryLocation = document.getElementById('delivery-loc').value.trim();
+  await saveContainers(state.containers);
+  await pushLog(`Delivery location set for ${c.containerNumber} by ${state.person}: ${c.deliveryLocation}`);
+  toast('Delivery location saved.');
+  openContainer(id);
+}
+async function recordSealExam(id){
+  const c = byId(id);
+  const seal = document.getElementById('seal-exam').value.trim();
+  if(!seal){ toast('Enter the seal number.'); return; }
+  c.sealNumber = seal;
+  await saveContainers(state.containers);
+  await pushLog(`Seal number ${seal} recorded at examination for ${c.containerNumber} by ${state.person}`, 'Operations');
+  toast('Seal number recorded.');
+  openContainer(id);
+}
+async function recordSealDelivery(id){
+  const c = byId(id);
+  const seal = document.getElementById('seal-delivery').value.trim();
+  if(!seal){ toast('Enter the seal number shown on the container.'); return; }
+  c.sealNumberDelivery = seal;
+  c.sealMismatch = seal !== c.sealNumber;
+  c.deliveredDate = new Date().toISOString();
+  if(c.sealMismatch){
+    c.alerts.push({id:'a'+Date.now(), type:'Seal Mismatch', desc:`Seal recorded at examination (${c.sealNumber}) does not match the seal confirmed at delivery (${seal}).`, status:'active', dateDetected:new Date().toISOString()});
+  }
+  await saveContainers(state.containers);
+  await pushLog(`Seal ${seal} confirmed at delivery for ${c.containerNumber} by ${state.person}${c.sealMismatch?' — MISMATCH DETECTED':''}`, 'Transport');
+  toast(c.sealMismatch ? 'Seal mismatch — alert raised.' : 'Seal confirmed — matches examination record.');
+  openContainer(id); renderApp();
+}
+async function addProgressNote(id){
+  const c = byId(id);
+  const text = document.getElementById('progress-note').value.trim();
+  if(!text){ toast('Enter a comment explaining the delay first.'); return; }
+  c.progressNotes.push({text, by:state.person, date:new Date().toISOString()});
+  await saveContainers(state.containers);
+  await pushLog(`Progress note on ${c.containerNumber} by ${state.person}: ${text}`);
+  toast('Comment added.');
+  openContainer(id);
+}
+function showStepDownForm(id){
+  const area = document.getElementById('stepdown-form-area');
+  area.innerHTML = `
+    <div class="stepdown-card" style="margin-top:12px;">
+      <h4>Step down this container</h4>
+      <p style="font-size:12.5px;">Use this when a job was recorded in the Book of Life but will not be cleared through the terminal for now. Explain the reason below.</p>
+      <textarea id="stepdown-comment" rows="3" placeholder="Explain why this container is being stepped down…" style="margin-bottom:8px;"></textarea>
+      <button class="btn small danger" onclick="confirmStepDown('${id}')">Confirm step down</button>
+      <button class="btn small ghost" onclick="document.getElementById('stepdown-form-area').innerHTML=''">Cancel</button>
+    </div>`;
+}
+async function confirmStepDown(id){
+  if(checkMasterHold()) return;
+  const c = byId(id);
+  const comment = document.getElementById('stepdown-comment').value.trim();
+  if(!comment){ toast('Please explain why this container is being stepped down.'); return; }
+  c.steppedDown = {status:true, comment, by:state.person, date:new Date().toISOString()};
+  await saveContainers(state.containers);
+  await pushLog(`${c.containerNumber} stepped down by ${state.person}: ${comment}`);
+  toast(`${c.containerNumber} marked as stepped down.`);
+  openContainer(id); renderApp();
+}
+async function reactivateContainer(id){
+  if(checkMasterHold()) return;
+  const c = byId(id);
+  if(!confirm('Reactivate this container and return it to the active pipeline?')) return;
+  c.steppedDown = {status:false, comment:'', by:null, date:null};
+  await saveContainers(state.containers);
+  await pushLog(`${c.containerNumber} reactivated by ${state.person}`);
+  toast(`${c.containerNumber} reactivated.`);
+  openContainer(id); renderApp();
+}
+async function recordDutyPayment(id){
+  if(checkMasterHold()) return;
+  const c = byId(id);
+  const dutyAmount = Number(document.getElementById('duty-amount').value)||0;
+  const ref = document.getElementById('duty-ref').value.trim();
+  if(!ref){ toast('Enter a payment reference.'); return; }
+  c.financial.customsDuties = dutyAmount;
+  c.financial.dutyStatus = 'paid';
+  c.financial.dutyPaymentRef = ref;
+  c.financial.dutyPaymentDate = new Date().toISOString();
+  await saveContainers(state.containers);
+  await pushLog(`Duty payment recorded for ${c.containerNumber}: ${fmtNaira(dutyAmount)} (Ref ${ref}) by ${state.person}`);
+  toast('Duty payment recorded.');
+  openContainer(id);
+}
+function canEditTransferLetter(){ return isSuperAdmin() || ['Documentation','Operations'].includes(state.department); }
+async function saveTransferLetter(id){
+  const c = byId(id);
+  const el = document.getElementById('transfer-letter');
+  c.transferLetterNumber = el.value.trim() || null;
+  await saveContainers(state.containers);
+  await pushLog(`Transfer letter number set for ${c.containerNumber} by ${state.person}: ${c.transferLetterNumber||'cleared'}`, 'Documentation');
+  toast('Transfer letter number saved.');
+  openContainer(id);
+}
+function canEditInvoiceNumber(){ return isSuperAdmin() || ['Accountant','DTI','Operations'].includes(state.department); }
+async function saveInvoiceNumber(id){
+  const c = byId(id);
+  const el = document.getElementById('id-invoice-number');
+  c.invoiceNumber = el.value.trim() || null;
+  await saveContainers(state.containers);
+  await pushLog(`Invoice / charge number set for ${c.containerNumber} by ${state.person}: ${c.invoiceNumber||'cleared'}`);
+  toast('Invoice / charge number saved.');
+  openContainer(id);
+}
+function canEditTransporter(){ return isSuperAdmin() || ['Documentation','DTI','Transport'].includes(state.department); }
+async function saveTransporter(id){
+  const c = byId(id);
+  const name = document.getElementById('transporter-name').value.trim();
+  const phone = document.getElementById('transporter-phone').value.trim();
+  const vehicleNumber = document.getElementById('transporter-vehicle').value.trim();
+  const driverIdNumber = document.getElementById('transporter-id').value.trim();
+  if(!name){ toast('Transporter / driver name is required.'); return; }
+  const prev = c.transporter;
+  const isHandover = prev && (prev.name!==name || (prev.phone||'')!==phone);
+  if(isHandover){
+    c.transportHistory = c.transportHistory || [];
+    c.transportHistory.push({ name:prev.name, phone:prev.phone, vehicleNumber:prev.vehicleNumber, driverIdNumber:prev.driverIdNumber,
+      by: state.person, handoverDate: new Date().toISOString() });
+  }
+  c.transporter = { name, phone: phone||null, vehicleNumber: vehicleNumber||null, driverIdNumber: driverIdNumber||null, by: state.person, date: new Date().toISOString() };
+  await saveContainers(state.containers);
+  await pushLog(`${isHandover?'Transporter handover recorded':'Transporter recorded'} for ${c.containerNumber} by ${state.person}: ${name}`, 'Documentation');
+  toast(isHandover?'Handover recorded.':'Transporter / driver saved.');
+  openContainer(id);
+}
+function canEditExitNumber(){ return isSuperAdmin() || state.department==='Operations'; }
+async function saveExitNumber(id){
+  const c = byId(id);
+  const el = document.getElementById('id-exit-number');
+  c.exitNumber = el.value.trim() || null;
+  await saveContainers(state.containers);
+  await pushLog(`Exit number set for ${c.containerNumber} by ${state.person}: ${c.exitNumber||'cleared'}`, 'Operations');
+  toast('Exit number saved.');
+  openContainer(id);
+}
+async function savePlacementInstruction(id){
+  const c = byId(id);
+  const val = document.getElementById('placement-instruction').value;
+  c.placementInstruction = val || null;
+  c.placementInstructionBy = state.person;
+  c.placementInstructionDate = new Date().toISOString();
+  await saveContainers(state.containers);
+  await pushLog(`Admin instructed ${c.containerNumber} be kept: ${val||'unset'} (by ${state.person})`, 'Operations');
+  toast('Placement instruction saved.');
+  openContainer(id);
+}
+async function saveContainerPlacement(id){
+  const c = byId(id);
+  const method = document.getElementById('placement-method').value;
+  const target = document.getElementById('placement-target') ? document.getElementById('placement-target').value : '';
+  c.placementActual = method==='stacked' ? `Stacked with ${target}` : (method==='ground' ? 'Ground' : null);
+  c.placementBy = state.person;
+  c.placementDate = new Date().toISOString();
+  await saveContainers(state.containers);
+  await pushLog(`${c.containerNumber} recorded as: ${c.placementActual} (by ${state.person})`, 'Operations');
+  toast('Container placement recorded.');
+  openContainer(id);
+}
+async function completeBol(id){
+  const c = byId(id);
+  const a = document.getElementById('bol-a').value.trim();
+  const cc = document.getElementById('bol-c').value.trim();
+  if(!a || !cc){ toast('A-Number and C-Number are both required.'); return; }
+  c.aNumber = a; c.cNumber = cc; c.bolComplete = true;
+  await saveContainers(state.containers);
+  await pushLog(`${c.containerNumber}: DTI assessment complete — transmitted to BODOGWU (A:${a} / C:${cc}) by ${state.person}`, 'Documentation');
+  toast(`${c.containerNumber} Book of Life numbers saved.`);
+  openContainer(id); renderApp();
+}
+async function updateStage(id){
+  if(checkMasterHold()) return;
+  const c = byId(id);
+  const idx = parseInt(document.getElementById('stage-select').value,10);
+  const forceCb = document.getElementById('force-advance');
+  const force = forceCb && forceCb.checked;
+  if(idx === c.stageIdx){ toast('Already at that stage.'); return; }
+  if(!force && !isSuperAdmin()){
+    const allowed = allowedStagesFor(state.department);
+    if(!allowed.includes(idx)){ toast(`Your department (${state.department}) is not authorized to set this stage.`); return; }
+  }
+  if(idx>=10 && !c.bolComplete && !force){ toast('Assessment (Book of Life) must be completed before examination can begin.'); return; }
+  if(Math.abs(idx - c.stageIdx) > 1 && !force){
+    if(!confirm('Stage progression looks out of sequence. Continue anyway?')) return;
+  }
+  let reasonNote = '';
+  if(force){
+    const reasonEl = document.getElementById('force-reason');
+    const reason = reasonEl ? reasonEl.value.trim() : '';
+    if(!reason){ toast('Enter a justification to force-advance.'); return; }
+    reasonNote = ` [FORCED by Admin: ${reason}]`;
+    await pushSecurityLog(`${state.person} force-advanced ${c.containerNumber} from ${STAGES[c.stageIdx].code} to ${STAGES[idx].code}: ${reason}`);
+  }
+  c.stageIdx = idx;
+  c.history.push({stage:idx, t:new Date().toISOString(), user: state.person});
+  if(idx===6 && !c.transireSubmittedDate) c.transireSubmittedDate = new Date().toISOString();
+  if(idx===12 && !c.detentionStart) c.detentionStart = new Date().toISOString();
+  if(idx===13 && !c.deliveredDate) c.deliveredDate = new Date().toISOString();
+  await saveContainers(state.containers);
+  const dept = STAGE_DEPT[idx];
+  await pushLog(`${c.containerNumber} moved to ${STAGES[idx].code} — ${STAGES[idx].label}. Action now with ${dept}. (by ${state.person})${reasonNote}`, dept);
+  if(idx===9) await pushLog(`${c.containerNumber} arrived at BILBT — schedule examination.`, 'Operations');
+  if(idx===11) await pushLog(`${c.containerNumber} released by customs — ready for delivery.`, 'Transport');
+  toast(`${c.containerNumber} updated to ${STAGES[idx].code}.`);
+  openContainer(id); renderApp();
+}
+async function raiseAlert(id){
+  const c = byId(id);
+  const type = document.getElementById('alert-type').value;
+  const desc = document.getElementById('alert-desc').value.trim() || 'Issue flagged by BILBT staff — see terminal for details.';
+  c.alerts.push({id:'a'+Date.now(), type, desc, status:'active', dateDetected:new Date().toISOString()});
+  await saveContainers(state.containers);
+  await pushLog(`Alert raised on ${c.containerNumber}: ${type} (by ${state.person})`);
+  toast(`${type} alert raised on ${c.containerNumber}.`);
+  openContainer(id); renderApp();
+}
+async function resolveAlert(cid, aid){
+  const c = byId(cid); const a = c.alerts.find(x=>x.id===aid); a.status='resolved';
+  await saveContainers(state.containers);
+  await pushLog(`${a.type} alert resolved on ${c.containerNumber} (by ${state.person})`);
+  toast('Alert marked resolved.');
+  openContainer(cid); renderApp();
+}
+async function attachDoc(id){
+  const c = byId(id);
+  const type = document.getElementById('doc-type').value;
+  const fileInput = document.getElementById('doc-file');
+  const file = fileInput && fileInput.files && fileInput.files[0];
+  const name = file ? file.name : `${type.replace(/\s+/g,'_')}.pdf`;
+  const sizeKB = file ? Math.max(1, Math.round(file.size/1024)) : null;
+  c.documents.push({name, type, uploadedBy:state.person, date:new Date().toISOString(), sizeKB});
+  await saveContainers(state.containers);
+  await pushLog(`${type} uploaded for ${c.containerNumber} (by ${state.person})`);
+  toast(`${name} uploaded.`);
+  openContainer(id);
+}
+async function uploadInvoice(id){
+  const c = byId(id);
+  const fileInput = document.getElementById('invoice-file');
+  const file = fileInput && fileInput.files && fileInput.files[0];
+  const amount = Number(document.getElementById('invoice-amount').value)||0;
+  if(!file){ toast('Choose an invoice file.'); return; }
+  let dataUrl = null;
+  if(file.size < 400000){
+    try{ dataUrl = await new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); }); }catch(e){ dataUrl=null; }
+  }
+  c.invoices.push({id:'inv'+Date.now(), fileName:file.name, sizeKB:Math.max(1,Math.round(file.size/1024)), amount, uploadedBy:state.person, date:new Date().toISOString(), status:'pending', paymentStatus:'unpaid', dataUrl});
+  await saveContainers(state.containers);
+  await pushLog(`Invoice uploaded for ${c.containerNumber} by ${state.person}: ${fmtNaira(amount)}`);
+  toast('Invoice uploaded — awaiting Admin approval.');
+  openContainer(id);
+}
+async function reviewInvoice(cid, invId, decision){
+  if(checkMasterHold()) return;
+  const c = byId(cid); const inv = c.invoices.find(i=>i.id===invId);
+  inv.status = decision; inv.reviewedBy = state.person; inv.reviewDate = new Date().toISOString();
+  await saveContainers(state.containers);
+  await pushLog(`Invoice ${inv.fileName} on ${c.containerNumber} ${decision} by ${state.person}`);
+  toast(`Invoice ${decision}.`);
+  openContainer(cid);
+}
+async function toggleInvoicePaid(cid, invId){
+  const c = byId(cid); const inv = c.invoices.find(i=>i.id===invId);
+  inv.paymentStatus = inv.paymentStatus==='paid' ? 'unpaid' : 'paid';
+  await saveContainers(state.containers);
+  await pushLog(`Invoice ${inv.fileName} on ${c.containerNumber} marked ${inv.paymentStatus} by ${state.person}`);
+  toast(`Invoice marked ${inv.paymentStatus}.`);
+  openContainer(cid);
+}
+
+/* ========================= ADMIN DASHBOARD ========================= */
+function computePendingTasks(){
+  const all = state.containers;
+  const active = all.filter(c=>!c.steppedDown.status);
+  const tasks = [];
+  const dept = state.department;
+  if(isSuperAdmin() || dept==='Documentation'){
+    const n = all.filter(c=>!c.transferLetterNumber).length;
+    if(n) tasks.push({text:`${n} job(s) still need a BILBT transfer letter number.`, tab:'bol'});
+  }
+  if(isSuperAdmin() || dept==='DTI'){
+    const n = all.filter(c=>!c.bolComplete).length;
+    if(n) tasks.push({text:`${n} job(s) awaiting DTI assessment (A-Number / C-Number).`, tab:'bol'});
+  }
+  if(isSuperAdmin() || dept==='Field Staff'){
+    const n = active.filter(c=>c.stageIdx<=8 && daysBetween(c.createdAt)>3).length;
+    if(n) tasks.push({text:`${n} job(s) have been in CPC processing for more than 3 days.`, tab:'endtoend'});
+  }
+  if(isSuperAdmin() || dept==='Operations'){
+    const arrived = active.filter(c=>c.stageIdx===9).length;
+    const noPlacement = active.filter(c=>c.stageIdx>=9 && !c.placementActual).length;
+    const noExit = active.filter(c=>c.stageIdx>=11 && !c.exitNumber).length;
+    if(arrived) tasks.push({text:`${arrived} job(s) arrived at BILBT and need examination scheduled.`, tab:'endtoend'});
+    if(noPlacement) tasks.push({text:`${noPlacement} job(s) at the terminal have no recorded placement (ground / stacked).`, tab:'endtoend'});
+    if(noExit) tasks.push({text:`${noExit} job(s) cleared release but have no exit number recorded.`, tab:'bol'});
+  }
+  if(isSuperAdmin() || dept==='Transport'){
+    const n = active.filter(c=>c.stageIdx===11 && !c.deliveryLocation).length;
+    if(n) tasks.push({text:`${n} released job(s) have no delivery location on file yet.`, tab:'endtoend'});
+  }
+  if(isSuperAdmin() || dept==='Accountant'){
+    const noInv = all.filter(c=>!c.invoiceNumber).length;
+    const pendingDuty = active.filter(c=>c.financial.dutyStatus==='pending').length;
+    const pendingInvoices = all.reduce((s,c)=>s+c.invoices.filter(i=>i.status==='pending').length,0);
+    if(noInv) tasks.push({text:`${noInv} job(s) have no invoice / charge number issued yet.`, tab:'finance'});
+    if(pendingDuty) tasks.push({text:`${pendingDuty} job(s) have duties still pending payment.`, tab:'finance'});
+    if(pendingInvoices) tasks.push({text:`${pendingInvoices} uploaded invoice(s) awaiting Admin approval.`, tab:'finance'});
+  }
+  if(isSuperAdmin()){
+    const pu = state.users.filter(u=>u.status==='pending_verification').length;
+    if(pu) tasks.push({text:`${pu} account(s) awaiting identity verification.`, tab:'verification'});
+    const pendingInvoicesAll = all.reduce((s,c)=>s+c.invoices.filter(i=>i.status==='pending').length,0);
+    if(pendingInvoicesAll) tasks.push({text:`${pendingInvoicesAll} invoice(s) awaiting your approval.`, tab:'finance'});
+  }
+  return tasks;
+}
+function adminDashboardHTML(){
+  const list = state.containers.filter(c=>!c.steppedDown.status);
+  const inCPC = list.filter(c=>c.stageIdx<=8).length;
+  const atBILBT = list.filter(c=>c.stageIdx>=9 && c.stageIdx<=12).length;
+  const alerts = activeAlertCount(list);
+  const owners = uniqueNames(list,'owner'); const agents = uniqueNames(list,'agent');
+  const inbox = isSuperAdmin() ? state.log.filter(l=>l.dept && !l.ack.includes('Admin')) :
+    (state.department ? state.log.filter(l=>l.dept===state.department && !l.ack.includes(state.department)) : []);
+  const pendingUsers = state.users.filter(u=>u.status==='pending_verification').length;
+  const tasks = computePendingTasks();
+  return `
+    ${isSuperAdmin() && pendingUsers>0 ? `<div class="hold-banner" style="background:var(--amber);color:#3A2900;">🔔 ${pendingUsers} account(s) awaiting verification — see Verification Queue.</div>` : ''}
+    <div class="topbar"><div><h1>Terminal Dashboard</h1><div class="desc">Active jobs at Belburge International Limited Bonded Terminal. Stepped-down jobs live in End to End.</div></div>
+      ${canSeeFenBol()?`<button class="btn" onclick="switchTab('fen')">+ Register new job</button>`:''}</div>
+
+    <div class="panel inbox-panel">
+      <div class="panel-head"><h3>🔔 Pending tasks — stay on top of your queue</h3><span class="tag-line">${tasks.length} item(s)</span></div>
+      <div class="panel-body">
+        ${tasks.length===0 ? `<div class="tag-line">Nothing outstanding for ${state.department||'your department'} right now. Nice work.</div>` :
+          tasks.map(t=>`<div class="inbox-row"><span>${t.text}</span><button class="btn small secondary" onclick="switchTab('${t.tab}')">View</button></div>`).join('')}
+      </div>
+    </div>
+
+    ${state.department ? `
+    <div class="panel inbox-panel">
+      <div class="panel-head"><h3>${isSuperAdmin()?'All departments — inbox':state.department+' department inbox'}</h3><span class="tag-line">${inbox.length} item(s) waiting</span></div>
+      <div class="panel-body">
+        ${inbox.length===0 ? `<div class="tag-line">Nothing waiting right now.</div>` :
+          inbox.map(l=>`<div class="inbox-row"><span>${l.dept?`<span class="dept-chip">${l.dept}</span>`:''}${l.msg}<div class="tag-line">${fmtDateTime(l.t)}</div></span>
+            <button class="btn small secondary" onclick="ackLog('${l.id}')">Mark handled</button></div>`).join('')}
+      </div>
+    </div>` : ''}
+
+    <div class="metric-row">
+      <div class="metric"><div class="num">${list.length}</div><div class="lbl">Active jobs</div></div>
+      <div class="metric"><div class="num">${inCPC}</div><div class="lbl">In CPC processing</div></div>
+      <div class="metric"><div class="num">${atBILBT}</div><div class="lbl">At BILBT terminal</div></div>
+      <div class="metric"><div class="num">${alerts}</div><div class="lbl">Active alerts</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h3>Active jobs</h3>
+        <div class="toolbar">
+          <select id="f-status" onchange="applyAdminFilters()"><option value="all">All statuses</option><option value="cpc">In CPC</option><option value="bilbt">At BILBT</option><option value="delivered">Delivered</option></select>
+          <select id="f-owner-filter" onchange="applyAdminFilters()"><option value="all">All owners</option>${owners.map(o=>`<option>${o}</option>`).join('')}</select>
+          <select id="f-agent-filter" onchange="applyAdminFilters()"><option value="all">All agents</option>${agents.map(a=>`<option>${a}</option>`).join('')}</select>
+          <input type="text" id="job-search" placeholder="Search container, BOL…" oninput="applyAdminFilters()">
+        </div>
+      </div>
+      <div class="panel-body" style="padding:0 18px;" id="job-list">${jobListHTML(list)}</div>
+    </div>`;
+}
+async function ackLog(id){
+  const l = state.log.find(x=>x.id===id);
+  const key = isSuperAdmin() ? 'Admin' : state.department;
+  if(l && !l.ack.includes(key)) l.ack.push(key);
+  await saveLog();
+  toast('Marked handled.');
+  renderApp();
+}
+
+/* ========================= STAFF DIRECTORY (Admin only) ========================= */
+function staffHTML(){
+  const staff = state.users.filter(u=>u.role==='admin');
+  const clients = state.users.filter(u=>u.role!=='admin');
+  const opDepts = DEPARTMENTS.filter(d=>d!=='Admin');
+  return `
+    <div class="topbar"><div><h1>Staff Directory</h1><div class="desc">Manage every BILBT staff and client account. Visible to the Admin department only.</div></div></div>
+
+    <div class="panel"><div class="panel-head"><h3>Department stage access — journey stages 1 to 15</h3></div>
+      <div class="panel-body">
+        <p class="hint" style="margin:0 0 10px;">Choose which stages each department may advance a container to. Admin always has full access.</p>
+        ${opDepts.map(d=>`
+        <div style="margin-bottom:14px;">
+          <b style="font-size:12.5px;">${d}</b> <span class="tag-line">— ${DEPT_DESCRIPTIONS[d]}</span>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;">
+            ${STAGES.map((s,i)=>`<label style="font-size:11px;display:flex;gap:4px;align-items:center;background:#F1F4EC;padding:3px 7px;border-radius:12px;">
+              <input type="checkbox" id="stage-${d.replace(/\s+/g,'')}-${i}" ${(state.settings.deptStageAccess[d]||[]).includes(i)?'checked':''}> ${s.code}</label>`).join('')}
+          </div>
+          <button class="btn small secondary" style="margin-top:6px;" onclick="saveDeptStageAccess('${d}')">Save ${d} access</button>
+        </div>`).join('')}
+      </div></div>
+
+    <div class="panel"><div class="panel-head"><h3>Add / invite staff</h3></div>
+      <div class="panel-body">
+        <div class="form-grid3">
+          <div class="field"><label>Full name</label><input type="text" id="add-name"></div>
+          <div class="field"><label>Email</label><input type="text" id="add-email"></div>
+          <div class="field"><label>Department</label><select id="add-dept">${DEPARTMENTS.map(d=>`<option>${d}</option>`).join('')}</select></div>
+        </div>
+        <button class="btn small" onclick="adminAddStaff()">Add staff account</button>
+        <button class="btn small secondary" onclick="adminInviteStaff()">Invite via email (simulated)</button>
+        <div class="section-title">Bulk import via CSV</div>
+        <textarea id="csv-input" rows="3" placeholder="name,email,phone,department&#10;Amaka Chukwu,amaka@belburge.com,08030004444,Documentation"></textarea>
+        <button class="btn small secondary" style="margin-top:6px;" onclick="bulkImportCsv()">Import CSV</button>
+      </div></div>
+
+    <div class="panel"><div class="panel-head"><h3>BILBT staff</h3><button class="btn small secondary" onclick="exportUsersCsv()">Export CSV</button></div>
+      <div class="panel-body">
+        <div class="staff-row" style="font-weight:600;color:var(--slate);font-size:11px;text-transform:uppercase;letter-spacing:.6px;">
+          <span>Name</span><span>Login</span><span>Department</span><span>Actions</span></div>
+        ${staff.map(u=>`
+        <div class="staff-row">
+          <span>${u.name}<div class="tag-line">${u.uniqueId} · ${u.status}</div></span>
+          <span class="mono" style="font-size:11.5px;">${u.login}</span>
+          <span><select id="dept-${u.id}">${DEPARTMENTS.map(d=>`<option ${d===u.department?'selected':''}>${d}</option>`).join('')}</select></span>
+          <span style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button class="btn small secondary" onclick="updateStaffAccess('${u.id}')">Save</button>
+            <button class="btn small secondary" onclick="openProfile('${u.id}')">Profile</button>
+            <button class="btn small danger" onclick="deleteStaff('${u.id}')">Delete</button>
+          </span>
+        </div>`).join('')}
+      </div></div>
+    <div class="panel"><div class="panel-head"><h3>Importers & clearing agents</h3><button class="btn small secondary" onclick="exportUsersCsv()">Export CSV</button></div>
+      <div class="panel-body">
+        ${clients.map(u=>`<div class="staff-row" style="grid-template-columns:1fr 1fr 1fr auto;"><span>${u.name}<div class="tag-line">${u.uniqueId} · ${u.status}</div></span><span class="tag-line">${u.org}</span><span class="tag-line">${ROLE_META[u.role].name}</span>
+          <span style="display:flex;gap:6px;"><button class="btn small secondary" onclick="openProfile('${u.id}')">Profile</button><button class="btn small danger" onclick="deleteStaff('${u.id}')">Delete</button></span></div>`).join('') || '<div class="tag-line">None registered yet.</div>'}
+      </div></div>`;
+}
+async function saveDeptStageAccess(dept){
+  const key = dept.replace(/\s+/g,'');
+  const stages = STAGES.map((s,i)=>i).filter(i=>{ const el=document.getElementById('stage-'+key+'-'+i); return el && el.checked; });
+  state.settings.deptStageAccess[dept] = stages;
+  await saveSettings();
+  await pushSecurityLog(`${state.person} updated stage access for ${dept}: ${stages.map(i=>STAGES[i].code).join(', ')||'none'}`);
+  toast(`${dept} access saved.`);
+}
+async function adminAddStaff(){
+  const name = document.getElementById('add-name').value.trim();
+  const email = document.getElementById('add-email').value.trim();
+  const department = document.getElementById('add-dept').value;
+  if(!name||!email){ toast('Name and email are required.'); return; }
+  const temp = Math.random().toString(36).slice(-8);
+  const newId = 'u'+Date.now();
+  try{
+    await apiFetch('/api/auth/register', {method:'POST', body: JSON.stringify({id:newId, email, password:temp})});
+  }catch(err){
+    toast(err && err.status===409 ? 'That email is already registered.' : ('Could not create account: '+(err.message||'server error')));
+    return;
+  }
+  const u = normalizeUser({id:newId, name, login:email, org:'Belburge International Limited', role:'admin', department, status:'active'});
+  state.users.push(u);
+  await saveUsers(state.users);
+  await pushSecurityLog(`${state.person} added staff account for ${name} (${department})`);
+  toast(`Account created for ${name}. Temporary password: ${temp}`);
+  renderTab();
+}
+async function adminInviteStaff(){
+  const name = document.getElementById('add-name').value.trim();
+  const email = document.getElementById('add-email').value.trim();
+  const department = document.getElementById('add-dept').value;
+  if(!name||!email){ toast('Name and email are required.'); return; }
+  await adminAddStaff();
+  toast(`Invitation would be emailed to ${email} with their credentials (demo — no real email is sent).`);
+}
+async function bulkImportCsv(){
+  const raw = document.getElementById('csv-input').value.trim();
+  if(!raw){ toast('Paste CSV rows first.'); return; }
+  const lines = raw.split('\n').map(l=>l.trim()).filter(Boolean);
+  let created = 0, skipped = 0;
+  for(const line of lines){
+    const [name,email,phone,department] = line.split(',').map(s=>(s||'').trim());
+    if(!name || !email){ skipped++; continue; }
+    const temp = Math.random().toString(36).slice(-8);
+    const newId = 'u'+Date.now()+created;
+    try{
+      await apiFetch('/api/auth/register', {method:'POST', body: JSON.stringify({id:newId, email, password:temp})});
+    }catch(err){ skipped++; continue; }
+    state.users.push(normalizeUser({id:newId, name, login:email, phone, org:'Belburge International Limited', role:'admin', department: DEPARTMENTS.includes(department)?department:'Documentation', status:'active'}));
+    created++;
+  }
+  await saveUsers(state.users);
+  await pushSecurityLog(`${state.person} bulk-imported ${created} staff account(s) via CSV`);
+  toast(`Imported ${created} account(s), skipped ${skipped}.`);
+  renderTab();
+}
+function exportUsersCsv(){
+  const rows = [['Name','Login','Role','Department','Status','UniqueID']];
+  state.users.forEach(u=>rows.push([u.name,u.login,u.role,u.department||'',u.status,u.uniqueId]));
+  const csv = rows.map(r=>r.map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
+  downloadBlob(csv, 'belburge-users.csv', 'text/csv');
+}
+function downloadBlob(content, filename, mime){
+  const blob = new Blob([content], {type:mime});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 2000);
+}
+async function updateStaffAccess(uid){
+  const u = userById(uid);
+  u.department = document.getElementById('dept-'+uid).value;
+  await saveUsers(state.users);
+  await pushSecurityLog(`${state.person} changed ${u.name}'s department to ${u.department}`);
+  toast(`${u.name}'s department updated.`);
+  renderApp();
+}
+async function deleteStaff(uid){
+  if(uid===state.userId){ toast('You cannot delete your own account while signed in.'); return; }
+  const u = userById(uid);
+  if(!confirm(`Permanently delete ${u.name}'s account? This cannot be undone.`)) return;
+  state.users = state.users.filter(x=>x.id!==uid);
+  await saveUsers(state.users);
+  await pushSecurityLog(`${state.person} permanently deleted ${u.name}'s account`);
+  toast(`${u.name}'s account deleted.`);
+  renderApp();
+}
+
+/* ========================= VERIFICATION QUEUE (Admin only) ========================= */
+function verificationHTML(){
+  const pending = state.users.filter(u=>u.status==='pending_verification');
+  return `
+    <div class="topbar"><div><h1>Verification Queue</h1><div class="desc">Review new self-registrations before they can access the tracker.</div></div></div>
+    <div class="panel"><div class="panel-body">
+      ${pending.length===0? `<div class="empty-state"><div class="glyph">✓</div>No accounts waiting for review.</div>` :
+        pending.map(u=>`
+        <div class="verify-card">
+          <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+            <div>
+              <b>${u.name}</b> <span class="tag-line">${ROLE_META[u.role].name}${u.department?' · '+u.department:''}</span>
+              <div class="kv" style="margin-top:8px;"><b>Login</b><span>${u.login}</span></div>
+              <div class="kv"><b>Phone</b><span>${u.phone||'—'}</span></div>
+              <div class="kv"><b>Organisation</b><span>${u.org}</span></div>
+              ${u.corporateRegNumber?`<div class="kv"><b>CAC / RC Number</b><span>${u.corporateRegNumber}</span></div>`:''}
+              <div class="kv"><b>ID type</b><span>${u.idType||'Not provided'}</span></div>
+            </div>
+            <div>
+              ${u.idImage?`<img src="${u.idImage}" class="idcard-preview">`:`<div class="tag-line">${u.idFileName?u.idFileName+' (preview not stored — file too large for demo)':'No ID image provided.'}</div>`}
+            </div>
+          </div>
+          <div style="margin-top:10px;display:flex;gap:8px;">
+            <button class="btn small" onclick="approveUser('${u.id}')">Approve & Activate User Account</button>
+            <button class="btn small danger" onclick="rejectUser('${u.id}')">Reject</button>
+          </div>
+        </div>`).join('')}
+    </div></div>`;
+}
+async function approveUser(uid){
+  const u = userById(uid);
+  u.status = 'active'; u.verifiedBy = state.person; u.verifiedDate = new Date().toISOString();
+  await saveUsers(state.users);
+  await pushSecurityLog(`${state.person} approved and activated ${u.name}'s account (ID securely archived for compliance)`);
+  toast(`${u.name} approved and activated.`);
+  renderTab();
+}
+async function rejectUser(uid){
+  const u = userById(uid);
+  if(!confirm(`Reject ${u.name}'s registration? Their account will be removed.`)) return;
+  state.users = state.users.filter(x=>x.id!==uid);
+  await saveUsers(state.users);
+  await pushSecurityLog(`${state.person} rejected registration for ${u.name}`);
+  toast(`${u.name}'s registration rejected.`);
+  renderTab();
+}
+
+/* ========================= SYSTEM SETTINGS (Admin only) ========================= */
+function settingsHTML(){
+  const s = state.settings;
+  return `
+    <div class="topbar"><div><h1>System Settings</h1><div class="desc">Terminal-wide configuration. Some items are fully enforced in this app; others require real backend/infrastructure to enforce and are recorded here as policy only — clearly marked below.</div></div></div>
+
+    <div class="panel"><div class="panel-body">
+      <div class="settings-section">
+        <h3 style="font-size:14px;">Master Hold</h3>
+        <div class="toggle-row"><input type="checkbox" id="s-masterhold" ${s.masterHold?'checked':''}> <label for="s-masterhold">Freeze all stage advances, duty payments, invoice approvals, and seal recording terminal-wide (super-admin override for discrepancies).</label></div>
+      </div>
+      <div class="settings-section">
+        <h3 style="font-size:14px;">Terminal storage rates</h3>
+        <div class="form-grid">
+          <div class="field"><label>Free days</label><input type="number" id="s-freedays" value="${s.freeDays}"></div>
+          <div class="field"><label>Daily penalty rate (₦)</label><input type="number" id="s-rate" value="${s.dailyPenaltyRate}"></div>
+        </div>
+      </div>
+      <div class="settings-section">
+        <h3 style="font-size:14px;">Password & session policy</h3>
+        <div class="form-grid">
+          <div class="field"><label>Minimum password length</label><input type="number" id="s-minpass" value="${s.minPasswordLength}"></div>
+          <div class="field"><label>Password expiry (days)</label><input type="number" id="s-passexp" value="${s.passwordExpiryDays}"></div>
+          <div class="field"><label>Idle timeout (minutes)</label><input type="number" id="s-idle" value="${s.idleTimeoutMinutes}"></div>
+        </div>
+        <div class="toggle-row"><input type="checkbox" id="s-complexity" ${s.passwordComplexity?'checked':''}> <label for="s-complexity">Require upper/lower-case + number in passwords</label></div>
+        <div class="toggle-row"><input type="checkbox" id="s-mfa" ${s.mfaRequired?'checked':''}> <label for="s-mfa">Require Multi-Factor Authentication</label></div>
+        <div class="toggle-row"><input type="checkbox" id="s-sso" ${s.ssoRequired?'checked':''}> <label for="s-sso">Enforce company-wide Single Sign-On</label></div>
+        <div class="disabled-note">Idle timeout, minimum length, and expiry are enforced by this app. MFA/SSO enforcement needs a real identity provider — this toggle only records the policy.</div>
+        <div class="field" style="margin-top:10px;"><label>Corporate IP / VPN allow-list</label><textarea id="s-ip" rows="2">${s.ipAllowList}</textarea>
+          <div class="disabled-note">Recorded only — a browser page cannot enforce network-level IP restriction; this needs a real reverse proxy or firewall.</div></div>
+      </div>
+      <div class="settings-section">
+        <h3 style="font-size:14px;">Container placement</h3>
+        <p class="hint">The BILBT yard is open ground — there are no fixed blocks or tiers to configure. Admin can instruct Operations to drop a container on the ground or stack it, and Operations records what actually happened, directly from each container's detail screen.</p>
+      </div>
+      <div class="settings-section">
+        <h3 style="font-size:14px;">Branding & regional</h3>
+        <div class="form-grid">
+          <div class="field"><label>Organisation name</label><input type="text" id="s-brandname" value="${s.brandName}"></div>
+          <div class="field"><label>Primary colour</label><input type="color" id="s-brandcolor" value="${s.brandColor}"></div>
+          <div class="field"><label>Vanity URL</label><input type="text" id="s-vanity" value="${s.vanityUrl}" placeholder="tracker.belburge.com"></div>
+          <div class="field"><label>Default timezone</label><input type="text" id="s-tz" value="${s.defaultTimezone}"></div>
+        </div>
+        <div class="disabled-note">Vanity URL requires real DNS/hosting configuration outside this demo. Primary colour is applied live to this session.</div>
+      </div>
+      <div class="settings-section">
+        <h3 style="font-size:14px;">Integrations & developer</h3>
+        <div class="toolbar">
+          <button class="btn small secondary" disabled>Connect Slack</button>
+          <button class="btn small secondary" disabled>Connect Salesforce</button>
+          <button class="btn small secondary" disabled>Connect Jira</button>
+        </div>
+        <div class="disabled-note">Third-party integrations need real backend OAuth connections — not available in this self-contained demo.</div>
+        <button class="btn small secondary" style="margin-top:10px;" onclick="generateApiKey()">Generate API key (demo)</button>
+        <div class="mono" style="font-size:11.5px;margin-top:6px;">${s.apiKeys.map(k=>k).join('<br>')||'No keys generated yet.'}</div>
+        <div class="disabled-note">These are illustrative strings only — no real API is exposed by this demo.</div>
+      </div>
+      <div class="settings-section">
+        <h3 style="font-size:14px;">Compliance & backup</h3>
+        <button class="btn small secondary" onclick="downloadFullBackup()">Download full data backup (JSON)</button>
+        <button class="btn small secondary" onclick="exportUsersCsv()">Export users report (CSV)</button>
+        <button class="btn small secondary" onclick="exportReportsCsv()">Export performance report (CSV)</button>
+      </div>
+      <div class="settings-section">
+        <h3 style="font-size:14px;">High-risk action log</h3>
+        ${state.log.filter(l=>l.security).slice(0,25).map(l=>`<div class="history-row"><div class="dot"></div><div><div class="t">${fmtDateTime(l.t)}</div>${l.msg}</div></div>`).join('') || '<div class="tag-line">No security actions recorded yet.</div>'}
+      </div>
+      <button class="btn" style="margin-top:16px;" onclick="saveGeneralSettings()">Save all settings</button>
+    </div></div>`;
+}
+async function saveGeneralSettings(){
+  const s = state.settings;
+  s.masterHold = document.getElementById('s-masterhold').checked;
+  s.freeDays = Number(document.getElementById('s-freedays').value)||4;
+  s.dailyPenaltyRate = Number(document.getElementById('s-rate').value)||0;
+  s.minPasswordLength = Number(document.getElementById('s-minpass').value)||6;
+  s.passwordExpiryDays = Number(document.getElementById('s-passexp').value)||90;
+  s.idleTimeoutMinutes = Number(document.getElementById('s-idle').value)||15;
+  s.passwordComplexity = document.getElementById('s-complexity').checked;
+  s.mfaRequired = document.getElementById('s-mfa').checked;
+  s.ssoRequired = document.getElementById('s-sso').checked;
+  s.ipAllowList = document.getElementById('s-ip').value;
+  s.brandName = document.getElementById('s-brandname').value.trim() || s.brandName;
+  s.brandColor = document.getElementById('s-brandcolor').value;
+  s.vanityUrl = document.getElementById('s-vanity').value.trim();
+  s.defaultTimezone = document.getElementById('s-tz').value.trim();
+  document.documentElement.style.setProperty('--forest', s.brandColor);
+  await saveSettings();
+  await pushSecurityLog(`${state.person} updated system settings${s.masterHold?' — MASTER HOLD ENABLED':''}`);
+  toast('Settings saved.');
+  startIdleTimer();
+  renderApp();
+}
+function generateApiKey(){
+  const key = 'bilbt_' + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
+  state.settings.apiKeys.push(key);
+  saveSettings();
+  pushSecurityLog(`${state.person} generated a new API key (demo)`);
+  toast('Demo API key generated.');
+  renderTab();
+}
+function downloadFullBackup(){
+  const payload = {exportedAt:new Date().toISOString(), users:state.users, containers:state.containers, log:state.log, settings:state.settings, referrals:state.referrals, messages:state.messages};
+  downloadBlob(JSON.stringify(payload,null,2), 'belburge-backup-'+Date.now()+'.json', 'application/json');
+  pushSecurityLog(`${state.person} downloaded a full data backup for compliance archiving`);
+}
+function exportReportsCsv(){
+  const rows = [['Container','Item','Stage','Owner','Agent','Transire Days','Delivery Days','Duty Status']];
+  state.containers.forEach(c=>{
+    const transireDays = c.transireSubmittedDate ? daysBetween(c.createdAt) - daysBetween(c.transireSubmittedDate) : '';
+    const deliveryDays = c.deliveredDate ? daysBetween(c.createdAt) - daysBetween(c.deliveredDate) : '';
+    rows.push([c.containerNumber, c.item, STAGES[c.stageIdx].code, c.owner||'', c.agent||'', transireDays, deliveryDays, c.financial.dutyStatus]);
+  });
+  const csv = rows.map(r=>r.map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
+  downloadBlob(csv, 'belburge-performance-report.csv', 'text/csv');
+}
+
+/* ========================= SUPPORT ========================= */
+function threadKeyFor(name){ return 'client:'+name; }
+function supportHTML(){
+  if(state.role!=='admin'){
+    const key = threadKeyFor(state.person);
+    return renderThread(key, `Support — ${state.person}`, 'Message BILBT staff directly. Attach documents if needed.');
+  }
+  const clientNames = uniqueNames(state.containers.filter(c=>true),'owner').concat(uniqueNames(state.containers,'agent'));
+  const uniqueClients = [...new Set(clientNames)];
+  if(!state.supportThreadKey) state.supportThreadKey = 'internal';
+  return `
+    <div class="topbar"><div><h1>Support</h1><div class="desc">Message importers and agents directly, or coordinate with other BILBT staff internally.</div></div></div>
+    <div class="detail-grid">
+      <div class="panel"><div class="panel-head"><h3>Conversations</h3></div>
+        <div class="panel-body">
+          <div class="thread-item" onclick="openThread('internal')"><b>💬 Internal Staff Chat</b><div class="tag-line">All departments</div></div>
+          ${uniqueClients.map(n=>`<div class="thread-item" onclick="openThread('${threadKeyFor(n)}')"><b>${n}</b><div class="tag-line">Client support thread</div></div>`).join('')}
+        </div></div>
+      <div>${renderThread(state.supportThreadKey, state.supportThreadKey==='internal'?'Internal Staff Chat':state.supportThreadKey.replace('client:',''), '')}</div>
+    </div>`;
+}
+function openThread(key){ state.supportThreadKey = key; renderTab(); }
+function renderThread(key, title, subtitle){
+  const msgs = state.messages.filter(m=>m.channel===key);
+  return `
+    <div class="panel"><div class="panel-head"><h3>${title}</h3></div>
+      <div class="panel-body">
+        ${subtitle?`<p class="tag-line" style="margin-bottom:10px;">${subtitle}</p>`:''}
+        <div style="max-height:320px;overflow-y:auto;margin-bottom:10px;">
+          ${msgs.length===0?'<div class="tag-line">No messages yet — say hello.</div>':
+            msgs.map(m=>`<div class="msg-bubble ${m.from===state.person?'mine':''}">
+              <div class="msg-meta">${m.from} (${m.fromRole}) · ${fmtDateTime(m.date)}</div>
+              ${m.text?`<div>${m.text}</div>`:''}
+              ${m.fileName?`<div class="tag-line">📎 ${m.fileName}</div>`:''}
+            </div>`).join('')}
+        </div>
+        <textarea id="msg-text" rows="2" placeholder="Type a message…"></textarea>
+        <div class="field" style="margin:8px 0;"><input type="file" id="msg-file"></div>
+        <button class="btn small" onclick="sendMessage('${key}')">Send</button>
+      </div></div>`;
+}
+async function sendMessage(key){
+  const text = document.getElementById('msg-text').value.trim();
+  const fileInput = document.getElementById('msg-file');
+  const file = fileInput && fileInput.files && fileInput.files[0];
+  if(!text && !file){ toast('Write a message or attach a file.'); return; }
+  state.messages.push({id:'m'+Date.now(), channel:key, from:state.person, fromRole:ROLE_META[state.role].name, text, fileName:file?file.name:null, sizeKB:file?Math.round(file.size/1024):null, date:new Date().toISOString()});
+  await saveMessages();
+  toast('Message sent.');
+  renderTab();
+}
+
+/* ========================= REFERRALS ========================= */
+function referralsHTML(){
+  const mine = state.referrals.filter(r=>r.referrerName===state.person);
+  const isStaff = state.role==='admin';
+  return `
+    <div class="topbar"><div><h1>Refer & Earn</h1><div class="desc">Importers referring BILBT earn a discount. Agents referring another agent earn a discount. Staff referrals earn a commission.</div></div></div>
+    <div class="panel"><div class="panel-head"><h3>Submit a referral</h3></div>
+      <div class="panel-body">
+        <div class="form-grid">
+          <div class="field"><label>Referred party name</label><input type="text" id="ref-name"></div>
+          <div class="field"><label>Referred party contact</label><input type="text" id="ref-contact" placeholder="Phone or email"></div>
+        </div>
+        <textarea id="ref-note" rows="2" placeholder="Any context (optional)"></textarea>
+        <button class="btn small" style="margin-top:8px;" onclick="submitReferral()">Submit referral</button>
+      </div></div>
+    <div class="panel"><div class="panel-head"><h3>${isStaff?'All referrals':'My referrals'}</h3></div>
+      <div class="panel-body">
+        ${(isStaff?state.referrals:mine).length===0?'<div class="tag-line">No referrals yet.</div>':
+          (isStaff?state.referrals:mine).map(r=>`
+          <div class="action-item"><div class="txt"><b>${r.referredName}</b> <span class="tag-line">(${r.referrerName} · ${r.type.replace('_',' ')})</span>
+            <div class="tag-line">${r.referredContact} ${r.note?' · '+r.note:''} · ${fmtDate(r.date)}</div></div>
+            <span>${isStaff? `<select id="ref-status-${r.id}"><option ${r.status==='pending'?'selected':''}>pending</option><option ${r.status==='approved'?'selected':''}>approved</option><option ${r.status==='rewarded'?'selected':''}>rewarded</option></select> <button class="btn small secondary" onclick="updateReferralStatus('${r.id}')">Save</button>` : `<span class="pill ${r.status==='rewarded'?'ok':'wait'}">${r.status}</span>`}</span>
+          </div>`).join('')}
+      </div></div>`;
+}
+async function submitReferral(){
+  const name = document.getElementById('ref-name').value.trim();
+  const contact = document.getElementById('ref-contact').value.trim();
+  const note = document.getElementById('ref-note').value.trim();
+  if(!name || !contact){ toast('Enter the referred party name and contact.'); return; }
+  const type = state.role==='importer' ? 'importer_discount' : (state.role==='agent' ? 'agent_discount' : 'staff_commission');
+  state.referrals.push({id:'ref'+Date.now(), referrerName:state.person, referrerRole:ROLE_META[state.role].name, referredName:name, referredContact:contact, type, note, status:'pending', date:new Date().toISOString()});
+  await saveReferrals();
+  toast('Referral submitted.');
+  renderTab();
+}
+async function updateReferralStatus(id){
+  const r = state.referrals.find(x=>x.id===id);
+  r.status = document.getElementById('ref-status-'+id).value;
+  await saveReferrals();
+  await pushLog(`Referral for ${r.referredName} marked ${r.status} by ${state.person}`);
+  toast('Referral updated.');
+  renderTab();
+}
+
+/* ========================= ALERTS ========================= */
+function adminAlertsHTML(){
+  const rows = [];
+  state.containers.forEach(c=> c.alerts.forEach(a=> rows.push({c,a})));
+  rows.sort((x,y)=> (x.a.status==='active'?0:1) - (y.a.status==='active'?0:1));
+  return `
+    <div class="topbar"><div><h1>Alerts</h1><div class="desc">Every compliance flag raised across the terminal, active and resolved.</div></div></div>
+    <div class="panel"><div class="panel-body">
+      ${rows.length===0? `<div class="empty-state"><div class="glyph">✓</div>No alerts have been raised yet.</div>` :
+        rows.map(({c,a})=>`
+        <div class="action-item">
+          <div class="txt"><span class="cn">${c.containerNumber}</span> — <b>${a.type}</b>
+            ${a.status==='active'?'<span class="flag" style="margin-left:6px;">Active</span>':'<span class="pill done" style="margin-left:6px;">Resolved</span>'}
+            <div class="tag-line">${a.desc}</div></div>
+          <button class="btn small secondary" onclick="openContainer('${c.id}')">Open</button>
+        </div>`).join('')}
+    </div></div>`;
+}
+
+/* ========================= PERFORMANCE REPORTS ========================= */
+function reportsHTML(){
+  const list = state.containers;
+  const delivered = list.filter(c=>c.stageIdx>=13 && !c.steppedDown.status);
+  const avgTat = delivered.length ? Math.round(delivered.reduce((s,c)=>s+daysBetween(c.createdAt),0)/delivered.length) : 0;
+
+  const transireDone = list.filter(c=>c.transireSubmittedDate);
+  const avgTransireDays = transireDone.length ? (transireDone.reduce((s,c)=>s+Math.max(0,daysBetween(c.createdAt)-daysBetween(c.transireSubmittedDate)),0)/transireDone.length).toFixed(1) : '0';
+  const deliveredWithDates = list.filter(c=>c.deliveredDate);
+  const avgDeliveryDays = deliveredWithDates.length ? (deliveredWithDates.reduce((s,c)=>s+Math.max(0,daysBetween(c.createdAt)-daysBetween(c.deliveredDate)),0)/deliveredWithDates.length).toFixed(1) : '0';
+
+  const alertCounts = {};
+  list.forEach(c=>c.alerts.forEach(a=>{ alertCounts[a.type]=(alertCounts[a.type]||0)+1; }));
+  const maxAlert = Math.max(1, ...Object.values(alertCounts));
+
+  const stageCounts = {};
+  list.forEach(c=>{ if(c.stageIdx<13 && !c.steppedDown.status){ const k=STAGES[c.stageIdx].code; stageCounts[k]=(stageCounts[k]||0)+1; } });
+  const maxStage = Math.max(1, ...Object.values(stageCounts), 0);
+
+  const agentCounts = {};
+  list.forEach(c=>{ const key = c.agent || 'No agent (direct import)'; agentCounts[key]=(agentCounts[key]||0)+1; });
+  const maxAgent = Math.max(1, ...Object.values(agentCounts), 0);
+
+  return `
+    <div class="topbar"><div><h1>Performance Reports</h1><div class="desc">Terminal-wide metrics to spot bottlenecks and track turnaround.</div></div>
+      ${isSuperAdmin()?`<button class="btn small secondary" onclick="exportReportsCsv()">Export CSV</button>`:''}</div>
+    <div class="metric-row">
+      <div class="metric"><div class="num">${avgTat}d</div><div class="lbl">Avg. total turnaround</div></div>
+      <div class="metric"><div class="num">${avgTransireDays}d</div><div class="lbl">Avg. days to submit transire</div></div>
+      <div class="metric"><div class="num">${avgDeliveryDays}d</div><div class="lbl">Avg. days to delivery</div></div>
+      <div class="metric"><div class="num">${list.filter(c=>c.steppedDown.status).length}</div><div class="lbl">Stepped down</div></div>
+    </div>
+    <div class="panel"><div class="panel-head"><h3>Bottleneck — jobs currently sitting per stage</h3></div>
+      <div class="panel-body">
+        ${Object.keys(stageCounts).length===0 ? '<div class="tag-line">No jobs in progress.</div>' :
+          Object.entries(stageCounts).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`
+          <div class="bar-row"><div class="bar-label"><span>${k}</span><span>${v}</span></div>
+            <div class="bar-track"><div class="bar-fill amber" style="width:${(v/maxStage*100).toFixed(0)}%"></div></div></div>`).join('')}
+      </div></div>
+    <div class="panel"><div class="panel-head"><h3>Alerts by type</h3></div>
+      <div class="panel-body">
+        ${Object.keys(alertCounts).length===0 ? '<div class="tag-line">No alerts raised yet.</div>' :
+          Object.entries(alertCounts).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`
+          <div class="bar-row"><div class="bar-label"><span>${k}</span><span>${v}</span></div>
+            <div class="bar-track"><div class="bar-fill rust" style="width:${(v/maxAlert*100).toFixed(0)}%"></div></div></div>`).join('')}
+      </div></div>
+    <div class="panel"><div class="panel-head"><h3>Jobs handled per agent</h3></div>
+      <div class="panel-body">
+        ${Object.keys(agentCounts).length===0 ? '<div class="tag-line">No jobs yet.</div>' :
+          Object.entries(agentCounts).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`
+          <div class="bar-row"><div class="bar-label"><span>${k}</span><span>${v}</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:${(v/maxAgent*100).toFixed(0)}%"></div></div></div>`).join('')}
+      </div></div>`;
+}
+
+/* ========================= ACTIVITY LOG ========================= */
+function activityLogHTML(){
+  return `
+    <div class="topbar"><div><h1>Activity Log</h1><div class="desc">Every status change, alert, and handover notification across the terminal.</div></div></div>
+    <div class="panel"><div class="panel-body">
+      ${state.log.length===0 ? `<div class="empty-state"><div class="glyph">—</div>No activity yet.</div>` :
+        state.log.map(l=>`<div class="history-row"><div class="dot"></div><div><div class="t">${fmtDateTime(l.t)}</div>${l.dept?`<span class="dept-chip">${l.dept}</span>`:''}${l.msg}</div></div>`).join('')}
+    </div></div>`;
+}
+
+/* ========================= INIT ========================= */
+(async function init(){
+  if(getApiBase()){
+    await tryBootstrapServer();
+    try{ state.settings = await loadSettings(); }catch(e){ state.settings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS)); }
+    document.documentElement.style.setProperty('--forest', state.settings.brandColor);
+  }
+  renderLogin();
+})();
+</script>
+</body>
+</html>
